@@ -9,7 +9,8 @@ type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 
 export default function HomeDemo() {
   const { colors, spacing, fonts, fontSize, radii, shadow, iconSize, dimensions } = useDesign();
-  const { confirm, alert, showLoading, hideLoading, toast, showModal, hideModal } = useOverlay();
+  const { confirm, alert, showLoading, hideLoading, toast, showModal, hideModal, openWindow } =
+    useOverlay();
 
   const demoLoading = () => {
     showLoading('Loading…');
@@ -35,6 +36,22 @@ export default function HomeDemo() {
     });
     toast({ message: ok ? 'Deleted' : 'Kept', type: ok ? 'error' : 'info' });
   };
+
+  const demoWindow = () =>
+    openWindow(
+      <View style={{ gap: spacing.md }}>
+        <Text style={{ color: colors.text, fontFamily: fonts.bold, fontSize: fontSize.xl }}>Espresso</Text>
+        <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.base }}>
+          A detail panel slides in from the right and pushes the page content to the left — handy for
+          inspecting an item without leaving the list.
+        </Text>
+        <View style={{ gap: spacing.xs }}>
+          <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm }}>Price</Text>
+          <Text style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.lg }}>RM 9.90</Text>
+        </View>
+      </View>,
+      { title: 'Item detail' },
+    );
 
   const demoModal = () =>
     showModal(
@@ -65,6 +82,7 @@ export default function HomeDemo() {
     { icon: 'alert', title: 'Toast · warning', subtitle: 'Amber transient message', accent: colors.warning, onPress: () => toast({ message: 'Double-check this', type: 'warning' }) },
     { icon: 'gesture-tap-button', title: 'Toast · with action', subtitle: 'Includes a tappable action', accent: colors.primary, onPress: () => toast({ message: 'Item archived', type: 'info', actionLabel: 'Undo', onAction: () => toast({ message: 'Restored', type: 'success' }) }) },
     { icon: 'card-text', title: 'Modal', subtitle: 'Custom content in a centered card', accent: colors.secondary, onPress: demoModal },
+    { icon: 'dock-right', title: 'Window', subtitle: 'Right-side panel — pushes content left', accent: colors.secondary, onPress: demoWindow },
   ];
 
   return (

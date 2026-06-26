@@ -68,6 +68,21 @@ export type OverlayContextValue = {
   /** Transient bottom snackbar. Pass a string for a default info toast. */
   toast: (options: ToastOptions | string) => void;
   hideToast: () => void;
+  /**
+   * Open a right-side detail panel ("window"). Unlike a modal it pushes the
+   * page content left rather than overlaying it. Rendered by <WindowPanel/>.
+   */
+  openWindow: (content: React.ReactNode, options?: WindowOptions) => void;
+  closeWindow: () => void;
+  /** Window state, consumed by <WindowPanel/>. */
+  windowOpen: boolean;
+  windowContent: React.ReactNode;
+  windowTitle?: string;
+};
+
+export type WindowOptions = {
+  /** Header title shown at the top of the panel. */
+  title?: string;
 };
 
 /* -------------------------------------------------------------------------- */
@@ -99,6 +114,12 @@ type ToastState = {
   onAction?: () => void;
 };
 
+type WindowState = {
+  open: boolean;
+  content: React.ReactNode;
+  title?: string;
+};
+
 const OverlayContext = createContext<OverlayContextValue | null>(null);
 
 export const OverlayProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -128,6 +149,10 @@ export const OverlayProvider: React.FC<{ children: React.ReactNode }> = ({
     message: '',
     type: 'info',
     duration: 3500,
+  });
+  const [windowState, setWindowState] = useState<WindowState>({
+    open: false,
+    content: null,
   });
 
   // Pending promise resolver for the active dialog.
@@ -218,6 +243,16 @@ export const OverlayProvider: React.FC<{ children: React.ReactNode }> = ({
     [],
   );
 
+  /* -------------------------------- window ------------------------------- */
+
+  const openWindow = useCallback(
+    (content: React.ReactNode, options?: WindowOptions) => {
+      setWindowState({ open: true, content, title: options?.title });
+    },
+    [],
+  );
+  const closeWindow = useCallback(() => setWindowState((w) => ({ ...w, open: false })), []);
+
   const value = useMemo<OverlayContextValue>(
     () => ({
       showLoading,
@@ -228,8 +263,25 @@ export const OverlayProvider: React.FC<{ children: React.ReactNode }> = ({
       hideModal,
       toast,
       hideToast,
+      openWindow,
+      closeWindow,
+      windowOpen: windowState.open,
+      windowContent: windowState.content,
+      windowTitle: windowState.title,
     }),
-    [showLoading, hideLoading, alert, confirm, showModal, hideModal, toast, hideToast],
+    [
+      showLoading,
+      hideLoading,
+      alert,
+      confirm,
+      showModal,
+      hideModal,
+      toast,
+      hideToast,
+      openWindow,
+      closeWindow,
+      windowState,
+    ],
   );
 
   const toastColors: Record<ToastType, string> = {

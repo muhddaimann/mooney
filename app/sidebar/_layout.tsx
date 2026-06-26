@@ -4,6 +4,7 @@ import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Redirect, Slot } from 'expo-router';
 import Sidebar from '../../components/sidebar';
+import WindowPanel from '../../components/windowPanel';
 import { useDesign } from '../../contexts/designContext';
 import { useAuth } from '../../contexts/authContext';
 
@@ -45,6 +46,8 @@ export default function SidebarLayout() {
       <View style={{ flex: 1 }}>
         <Slot />
       </View>
+      {/* Right-side detail panel — pushes content left when open. */}
+      <WindowPanel />
     </SafeAreaView>
   );
 }

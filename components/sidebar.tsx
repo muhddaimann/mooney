@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { IconButton, Text } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { usePathname, useRouter } from 'expo-router';
 import { useDesign } from '../contexts/designContext';
 import { useAuth } from '../contexts/authContext';
 import { useOverlay } from '../contexts/overlayContext';
 import { ROLE_LABELS } from '../constants/auth';
+import ThemeToggle from './themeToggle';
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 
@@ -147,6 +148,10 @@ export default function Sidebar() {
     }
   };
 
+  const reload = () => {
+    if (typeof window !== 'undefined') window.location.reload();
+  };
+
   return (
     <Animated.View
       style={{
@@ -283,15 +288,18 @@ export default function Sidebar() {
             })}
       </View>
 
-      {/* User identity */}
+      {/* Profile pill */}
       {user && (
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: rowJustify,
-            height: dimensions.buttonHeight,
-            paddingHorizontal: collapsed ? 0 : spacing.xs,
+            backgroundColor: collapsed ? 'transparent' : colors.surfaceVariant,
+            borderRadius: radii.lg,
+            height: dimensions.buttonHeight + spacing.sm,
+            paddingLeft: collapsed ? 0 : spacing.sm,
+            paddingRight: collapsed ? 0 : spacing.xs,
             marginTop: spacing.sm,
           }}
         >
@@ -310,25 +318,56 @@ export default function Sidebar() {
             </Text>
           </View>
           {!collapsed && (
-            <Animated.View style={{ flex: 1, opacity: labelOpacity, marginLeft: spacing.sm }}>
-              <Text
-                numberOfLines={1}
-                style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.md }}
-              >
-                {user.name}
-              </Text>
-              <Text
-                numberOfLines={1}
-                style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm }}
-              >
-                {ROLE_LABELS[user.role]}
-              </Text>
-            </Animated.View>
+            <>
+              <Animated.View style={{ flex: 1, opacity: labelOpacity, marginLeft: spacing.sm }}>
+                <Text
+                  numberOfLines={1}
+                  style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.md }}
+                >
+                  {user.name}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm }}
+                >
+                  {ROLE_LABELS[user.role]}
+                </Text>
+              </Animated.View>
+              <IconButton
+                icon="account-edit-outline"
+                size={iconSize.md}
+                iconColor={colors.textSecondary}
+                onPress={() => router.push('/sidebar/settings')}
+                accessibilityLabel="Update profile"
+                style={{ margin: 0 }}
+              />
+            </>
           )}
         </View>
       )}
 
-      {/* Logout */}
+      {/* Theme toggle (left) + reload (right) */}
+      <View
+        style={{
+          flexDirection: collapsed ? 'column' : 'row',
+          alignItems: 'center',
+          justifyContent: collapsed ? 'center' : 'space-between',
+          gap: collapsed ? spacing.xs : 0,
+          marginTop: spacing.sm,
+        }}
+      >
+        <ThemeToggle />
+        <IconButton
+          icon="refresh"
+          size={iconSize.md}
+          iconColor={colors.textSecondary}
+          containerColor={colors.surfaceVariant}
+          onPress={reload}
+          accessibilityLabel="Reload app"
+        />
+      </View>
+
+      {/* Sign out */}
       <Pressable
         onPress={handleLogout}
         accessibilityRole="button"
@@ -340,7 +379,8 @@ export default function Sidebar() {
           height: dimensions.buttonHeight,
           paddingHorizontal: rowPadding,
           borderRadius: radii.md,
-          marginTop: spacing.xs,
+          marginTop: spacing.sm,
+          backgroundColor: colors.errorContainer,
         }}
       >
         <MaterialCommunityIcons name="logout" size={iconSize.lg} color={colors.error} />

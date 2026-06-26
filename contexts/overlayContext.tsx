@@ -17,6 +17,11 @@ import {
   Text,
 } from 'react-native-paper';
 import { useDesign } from './designContext';
+import { palettes } from '../constants/design';
+
+// The loading backdrop is always dark, so its content uses a fixed on-dark tone
+// (not the themed text/primary colours) to stay legible in either theme.
+const onOverlay = palettes.dark.text;
 
 /* -------------------------------------------------------------------------- */
 /*  Public types                                                              */
@@ -302,12 +307,12 @@ export const OverlayProvider: React.FC<{ children: React.ReactNode }> = ({
             style={[StyleSheet.absoluteFill, styles.loadingRoot, { backgroundColor: colors.overlay }]}
             pointerEvents="auto"
           >
-            <ActivityIndicator size="large" color={colors.primary} />
+            <ActivityIndicator size="large" color={onOverlay} />
             {loading.message ? (
               <Text
                 style={{
                   marginTop: spacing.md,
-                  color: colors.text,
+                  color: onOverlay,
                   fontFamily: fonts.semibold,
                   fontSize: fontSize.base,
                 }}

@@ -36,6 +36,7 @@ export type Palette = {
   borderStrong: string;
   overlay: string;
   error: string;
+  errorContainer: string;
   success: string;
   warning: string;
   info: string;
@@ -59,6 +60,7 @@ const dark: Palette = {
   borderStrong: '#475569', // Slate 600
   overlay: 'rgba(15, 23, 42, 0.72)',
   error: '#ef4444', // Red 500
+  errorContainer: '#450a0a', // Red 950
   success: '#10b981', // Emerald 500
   warning: '#f59e0b', // Amber 500
   info: '#38bdf8', // Sky 400
@@ -82,6 +84,7 @@ const light: Palette = {
   borderStrong: '#cbd5e1', // Slate 300
   overlay: 'rgba(15, 23, 42, 0.45)',
   error: '#dc2626', // Red 600
+  errorContainer: '#fee2e2', // Red 100
   success: '#059669', // Emerald 600
   warning: '#d97706', // Amber 600
   info: '#0284c7', // Sky 600

@@ -7,7 +7,6 @@ import { useDesign } from '../contexts/designContext';
 import { useAuth } from '../contexts/authContext';
 import { useOverlay } from '../contexts/overlayContext';
 import { ROLE_LABELS } from '../constants/auth';
-import ThemeToggle from './themeToggle';
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 
@@ -43,10 +42,10 @@ const flattenLeaves = (items: (NavLeaf | NavGroup)[]): NavLeaf[] =>
   items.flatMap((n) => ('children' in n ? [n, ...n.children] : [n]));
 
 export default function Sidebar() {
-  const { colors, spacing, radii, fonts, fontSize, dimensions, iconSize, shadow, duration } =
+  const { colors, spacing, radii, fonts, fontSize, dimensions, iconSize, shadow, duration, mode, toggleTheme } =
     useDesign();
   const { user, signOut } = useAuth();
-  const { confirm } = useOverlay();
+  const { confirm, showLoading, hideLoading } = useOverlay();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -149,7 +148,9 @@ export default function Sidebar() {
   };
 
   const reload = () => {
-    if (typeof window !== 'undefined') window.location.reload();
+    // For now just exercise the loading overlay (page reload comes later).
+    showLoading('Refreshing…');
+    setTimeout(hideLoading, 1200);
   };
 
   return (
@@ -346,25 +347,52 @@ export default function Sidebar() {
         </View>
       )}
 
-      {/* Theme toggle (left) + reload (right) */}
+      {/* Theme toggle (left) + reload (right) — fill the row equally */}
       <View
         style={{
           flexDirection: collapsed ? 'column' : 'row',
-          alignItems: 'center',
-          justifyContent: collapsed ? 'center' : 'space-between',
-          gap: collapsed ? spacing.xs : 0,
+          gap: spacing.xs,
           marginTop: spacing.sm,
         }}
       >
-        <ThemeToggle />
-        <IconButton
-          icon="refresh"
-          size={iconSize.md}
-          iconColor={colors.textSecondary}
-          containerColor={colors.surfaceVariant}
+        <Pressable
+          onPress={toggleTheme}
+          accessibilityRole="button"
+          accessibilityLabel={mode === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+          style={{
+            flex: collapsed ? undefined : 1,
+            width: collapsed ? dimensions.iconButton : undefined,
+            height: dimensions.iconButton,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: radii.md,
+            backgroundColor: colors.surfaceVariant,
+            alignSelf: collapsed ? 'center' : 'auto',
+          }}
+        >
+          <MaterialCommunityIcons
+            name={mode === 'dark' ? 'weather-sunny' : 'weather-night'}
+            size={iconSize.md}
+            color={colors.text}
+          />
+        </Pressable>
+        <Pressable
           onPress={reload}
-          accessibilityLabel="Reload app"
-        />
+          accessibilityRole="button"
+          accessibilityLabel="Reload"
+          style={{
+            flex: collapsed ? undefined : 1,
+            width: collapsed ? dimensions.iconButton : undefined,
+            height: dimensions.iconButton,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: radii.md,
+            backgroundColor: colors.surfaceVariant,
+            alignSelf: collapsed ? 'center' : 'auto',
+          }}
+        >
+          <MaterialCommunityIcons name="refresh" size={iconSize.md} color={colors.textSecondary} />
+        </Pressable>
       </View>
 
       {/* Sign out */}

@@ -124,7 +124,7 @@ export const CATALOG: CatalogItem[] = [
 
   // Mains
   { id: '080', name: 'Tomyum Fried Rice (Seafood)', category: 'main', unitPrice: 13.95, emoji: '🍚' },
-  { id: '081', name: 'Pineapple Fried Rice', category: 'main', unitPrice: 13.9, emoji: '🍍' },
+  { id: '081', name: 'Pineapple Fried Rice (Seafood)', category: 'main', unitPrice: 17.9, emoji: '🍍' },
   { id: '100', name: 'Pad Thai (Seafood)', category: 'main', unitPrice: 17.9, emoji: '🍤' },
   { id: '091', name: 'Pad Kra Pao with Rice', category: 'main', unitPrice: 14.9, emoji: '🌶️' },
   { id: '092', name: 'Pad Kreng Keng with Rice', category: 'main', unitPrice: 14.9, emoji: '🍛' },
@@ -135,7 +135,8 @@ export const CATALOG: CatalogItem[] = [
   { id: '095', name: 'Fried Garlic Beef with Rice', category: 'main', unitPrice: 15.9, emoji: '🥩' },
   { id: '096', name: 'Stir Fried Petai Chicken', category: 'main', unitPrice: 14.9, emoji: '🫛' },
   { id: '104', name: 'Stir Fried Glass Noodle', category: 'main', unitPrice: 22.9, emoji: '🍜' },
-  { id: '106', name: 'Tomyum Soup (Glass Noodle, Seafood)', category: 'main', unitPrice: 26.0, emoji: '🍲' },
+  { id: '106', name: 'Tomyum Soup (Glass Noodle)', category: 'main', unitPrice: 17.9, emoji: '🍲' },
+  { id: '106s', name: 'Tomyum Soup (Glass Noodle, Seafood)', category: 'main', unitPrice: 26.0, emoji: '🍲' },
   { id: '132', name: 'Fish Ball & Chicken Meat', category: 'main', unitPrice: 21.9, emoji: '🍢' },
 
   // Sides
@@ -152,7 +153,7 @@ export const CATALOG: CatalogItem[] = [
 
   // Drinks
   { id: '801', name: 'Thai Milk Tea', category: 'drink', unitPrice: 7.9, emoji: '🧋' },
-  { id: '802', name: 'Thai Green Milk Tea', category: 'drink', unitPrice: 11.9, emoji: '🍵' },
+  { id: '802', name: 'Thai Green Milk Tea', category: 'drink', unitPrice: 7.9, emoji: '🍵' },
   { id: 'b03', name: 'Lime Juice', category: 'drink', unitPrice: 6.9, emoji: '🍋' },
   { id: '810', name: 'Watermelon Juice', category: 'drink', unitPrice: 8.9, emoji: '🍉' },
   { id: '823', name: 'Plum Soda', category: 'drink', unitPrice: 9.9, emoji: '🥤' },

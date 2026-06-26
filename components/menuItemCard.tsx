@@ -3,24 +3,29 @@ import { Pressable, View } from 'react-native';
 import { IconButton, Text } from 'react-native-paper';
 import { useDesign } from '../contexts/designContext';
 import { useMenu } from '../contexts/menuContext';
+import { useOverlay } from '../contexts/overlayContext';
 import { formatCurrency, type CatalogItem } from '../constants/menu';
+import MenuItemDetail from './menuItemDetail';
 
 type Props = {
   item: CatalogItem;
 };
 
 /**
- * Compact, vertical menu card sized to sit in a wrapping grid (not full width).
- * Shows an Add button when unselected, a −/qty/+ stepper once chosen.
+ * Grid menu card. Tapping the body opens the item in the overlay window;
+ * the Add button / stepper manages quantity.
  */
 export default function MenuItemCard({ item }: Props) {
   const { colors, spacing, radii, fonts, fontSize, shadow } = useDesign();
   const { quantityOf, addItem, decrement } = useMenu();
+  const { openWindow } = useOverlay();
   const qty = quantityOf(item.id);
   const selected = qty > 0;
 
+  const openDetail = () => openWindow(<MenuItemDetail item={item} />, { title: item.name });
+
   return (
-    <Pressable onPress={() => addItem(item.id)} style={{ flexGrow: 1, flexBasis: 150, maxWidth: 220 }}>
+    <View style={{ flexGrow: 1, flexBasis: 150, maxWidth: 220 }}>
       <View
         style={{
           backgroundColor: colors.surface,
@@ -32,24 +37,18 @@ export default function MenuItemCard({ item }: Props) {
           ...shadow.sm,
         }}
       >
-        <Text style={{ fontSize: fontSize.xxl }}>{item.emoji ?? '🍽️'}</Text>
-
-        <Text numberOfLines={1} style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.base }}>
-          {item.name}
-        </Text>
-        <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm }}>
-          {formatCurrency(item.unitPrice)}
-        </Text>
+        <Pressable onPress={openDetail} style={{ gap: spacing.xs }}>
+          <Text style={{ fontSize: fontSize.xxl }}>{item.emoji ?? '🍽️'}</Text>
+          <Text numberOfLines={1} style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.base }}>
+            {item.name}
+          </Text>
+          <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm }}>
+            {formatCurrency(item.unitPrice)}
+          </Text>
+        </Pressable>
 
         {selected ? (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginTop: spacing.xs,
-            }}
-          >
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.xs }}>
             <IconButton
               icon="minus"
               size={16}
@@ -69,12 +68,12 @@ export default function MenuItemCard({ item }: Props) {
             />
           </View>
         ) : (
-          <View
+          <Pressable
+            onPress={() => addItem(item.id)}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: spacing.xs,
               marginTop: spacing.xs,
               height: 36,
               borderRadius: radii.md,
@@ -82,9 +81,9 @@ export default function MenuItemCard({ item }: Props) {
             }}
           >
             <Text style={{ color: colors.primary, fontFamily: fonts.semibold, fontSize: fontSize.md }}>＋ Add</Text>
-          </View>
+          </Pressable>
         )}
       </View>
-    </Pressable>
+    </View>
   );
 }

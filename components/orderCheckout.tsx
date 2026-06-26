@@ -169,6 +169,22 @@ export default function OrderCheckout() {
               {formatCurrency(summary.grandTotal)}
             </Text>
 
+            {/* Selected items */}
+            <View style={{ gap: spacing.xs }}>
+              {items.map((it) => (
+                <View key={it.id} style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text numberOfLines={1} style={{ flex: 1, color: colors.text, fontFamily: fonts.regular, fontSize: fontSize.md }}>
+                    {it.quantity}× {it.name}
+                  </Text>
+                  <Text style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.md, marginLeft: spacing.sm }}>
+                    {formatCurrency(it.subtotal)}
+                  </Text>
+                </View>
+              ))}
+            </View>
+
+            <View style={{ height: 1, backgroundColor: colors.border, marginVertical: spacing.md }} />
+
             <View style={{ gap: spacing.xs }}>
               {row('Subtotal', formatCurrency(summary.subtotal))}
               {charges.map((c) => row(c.name, formatCurrency(c.amount)))}

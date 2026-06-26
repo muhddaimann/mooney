@@ -1,69 +1,44 @@
 import React from 'react';
-import { View } from 'react-native';
-import { Card, SegmentedButtons, Text } from 'react-native-paper';
-import { useDesign, useTheme, type ThemePreference } from '../../../contexts/designContext';
+import { Image, View } from 'react-native';
+import { Text } from 'react-native-paper';
+import Constants from 'expo-constants';
+import { useDesign } from '../../../contexts/designContext';
+
+const APP_ICON = require('../../../assets/icon.png');
 
 export default function Settings() {
   const { colors, spacing, fonts, fontSize, radii, shadow } = useDesign();
-  const { preference, setMode, useSystemTheme } = useTheme();
 
-  const onChange = (next: string) => {
-    if (next === 'system') useSystemTheme();
-    else setMode(next as Exclude<ThemePreference, 'system'>);
-  };
+  const name = Constants.expoConfig?.name ?? 'Mooney';
+  const version = Constants.expoConfig?.version ?? '1.0.0';
 
   return (
-    <View style={{ flex: 1, padding: spacing.lg }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.lg }}>
+      <Image
+        source={APP_ICON}
+        style={{ width: 96, height: 96, borderRadius: radii.xl, ...shadow.md }}
+        resizeMode="cover"
+      />
       <Text
         style={{
           color: colors.text,
           fontFamily: fonts.bold,
-          fontSize: fontSize.xxl,
-          marginBottom: spacing.lg,
+          fontSize: fontSize.xl,
+          marginTop: spacing.md,
         }}
       >
-        Settings
+        {name}
       </Text>
-
-      <Card
+      <Text
         style={{
-          backgroundColor: colors.surface,
-          borderRadius: radii.lg,
-          padding: spacing.lg,
-          ...shadow.md,
+          color: colors.textSecondary,
+          fontFamily: fonts.regular,
+          fontSize: fontSize.base,
+          marginTop: spacing.xs,
         }}
       >
-        <Text
-          style={{
-            color: colors.text,
-            fontFamily: fonts.semibold,
-            fontSize: fontSize.lg,
-            marginBottom: spacing.xs,
-          }}
-        >
-          Appearance
-        </Text>
-        <Text
-          style={{
-            color: colors.textSecondary,
-            fontFamily: fonts.regular,
-            fontSize: fontSize.md,
-            marginBottom: spacing.md,
-          }}
-        >
-          Choose a theme or follow your device setting. Your choice is saved.
-        </Text>
-
-        <SegmentedButtons
-          value={preference}
-          onValueChange={onChange}
-          buttons={[
-            { value: 'light', label: 'Light', icon: 'weather-sunny' },
-            { value: 'dark', label: 'Dark', icon: 'weather-night' },
-            { value: 'system', label: 'System', icon: 'cellphone' },
-          ]}
-        />
-      </Card>
+        Version {version}
+      </Text>
     </View>
   );
 }

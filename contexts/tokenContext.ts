@@ -15,6 +15,7 @@ const NAMESPACE = 'mooney';
 /** Centralised registry of every persisted key. */
 export const StorageKeys = {
   themePreference: `${NAMESPACE}:theme-preference`,
+  session: `${NAMESPACE}:session`,
 } as const;
 
 export type StorageKey = (typeof StorageKeys)[keyof typeof StorageKeys];

@@ -3,10 +3,28 @@ import { View } from 'react-native';
 import { Card, Text, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDesign } from '../contexts/designContext';
+import { useOverlay } from '../contexts/overlayContext';
 import ThemeToggle from '../components/themeToggle';
 
 export default function HomeScreen() {
   const { colors, spacing, fonts, fontSize, radii, shadow, dimensions } = useDesign();
+  const { confirm, showLoading, hideLoading, toast } = useOverlay();
+
+  const handleGetStarted = async () => {
+    const ready = await confirm({
+      title: 'Get started',
+      message: 'Set up your Mooney workspace now?',
+      confirmLabel: 'Let’s go',
+      cancelLabel: 'Maybe later',
+    });
+    if (!ready) return;
+
+    showLoading('Setting things up…');
+    setTimeout(() => {
+      hideLoading();
+      toast({ message: 'Welcome to Mooney!', type: 'success' });
+    }, 1200);
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
@@ -67,7 +85,7 @@ export default function HomeScreen() {
               textColor={colors.onPrimary}
               labelStyle={{ fontFamily: fonts.bold }}
               style={{ borderRadius: radii.md }}
-              onPress={() => alert('Welcome to Mooney!')}
+              onPress={handleGetStarted}
             >
               Get Started
             </Button>

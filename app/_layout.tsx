@@ -3,6 +3,7 @@ import { ActivityIndicator } from 'react-native-paper';
 import { View, LogBox, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DesignProvider } from '../contexts/designContext';
+import { OverlayProvider } from '../contexts/overlayContext';
 import { palettes } from '../constants/design';
 import {
   useFonts,
@@ -40,7 +41,9 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <DesignProvider>
-        <Slot />
+        <OverlayProvider>
+          <Slot />
+        </OverlayProvider>
       </DesignProvider>
     </SafeAreaProvider>
   );

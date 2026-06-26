@@ -1,16 +1,16 @@
 import React, { createContext, useContext } from 'react';
 import { tokens } from '../constants/design';
 
-const ThemeContext = createContext(tokens);
+const DesignContext = createContext(tokens);
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const DesignProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <ThemeContext.Provider value={tokens}>
+    <DesignContext.Provider value={tokens}>
       {children}
-    </ThemeContext.Provider>
+    </DesignContext.Provider>
   );
 };
 
-export const useAppTheme = () => {
-  return useContext(ThemeContext);
+export const useDesign = () => {
+  return useContext(DesignContext);
 };

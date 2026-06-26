@@ -1,7 +1,7 @@
 import { Slot } from 'expo-router';
 import { PaperProvider, ActivityIndicator } from 'react-native-paper';
 import { View, LogBox } from 'react-native';
-import { ThemeProvider } from '../contexts/ThemeContext';
+import { DesignProvider } from '../contexts/designContext';
 import {
   useFonts,
   SourceSansPro_400Regular,
@@ -31,10 +31,10 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider>
+    <DesignProvider>
       <PaperProvider>
         <Slot />
       </PaperProvider>
-    </ThemeProvider>
+    </DesignProvider>
   );
 }

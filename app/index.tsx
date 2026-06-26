@@ -1,10 +1,10 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Card, Text, Button } from 'react-native-paper';
-import { useAppTheme } from '../contexts/ThemeContext';
+import { useDesign } from '../contexts/designContext';
 
 export default function HomeScreen() {
-  const tokens = useAppTheme();
+  const tokens = useDesign();
 
   return (
     <View 

@@ -7,7 +7,6 @@ import { useDesign } from '../contexts/designContext';
 import { useAuth } from '../contexts/authContext';
 import { useOverlay } from '../contexts/overlayContext';
 import { ROLE_LABELS } from '../constants/auth';
-import ThemeToggle from './themeToggle';
 
 type NavItem = {
   label: string;
@@ -54,6 +53,10 @@ export default function Sidebar() {
   // Labels only fade in once the pill is most of the way open.
   const labelOpacity = anim.interpolate({ inputRange: [0, 0.6, 1], outputRange: [0, 0, 1] });
 
+  // When collapsed, every row centers its icon; expanded, rows are left-aligned.
+  const rowJustify = collapsed ? 'center' : 'flex-start';
+  const rowPadding = collapsed ? 0 : spacing.sm + spacing.xs;
+
   const handleLogout = async () => {
     const ok = await confirm({
       title: 'Log out',
@@ -82,30 +85,35 @@ export default function Sidebar() {
         ...shadow.lg,
       }}
     >
-      {/* Header: brand + collapse toggle */}
+      {/* Header: brand (expanded only) + collapse toggle */}
       <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
+          justifyContent: rowJustify,
           height: dimensions.buttonHeight,
-          paddingLeft: spacing.sm,
+          paddingLeft: collapsed ? 0 : spacing.sm,
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: fontSize.lg }}>💰</Text>
-        <Animated.Text
-          numberOfLines={1}
-          style={{
-            flex: 1,
-            opacity: labelOpacity,
-            marginLeft: spacing.sm,
-            color: colors.text,
-            fontFamily: fonts.bold,
-            fontSize: fontSize.lg,
-          }}
-        >
-          Mooney
-        </Animated.Text>
+        {!collapsed && (
+          <>
+            <Text style={{ fontSize: fontSize.lg }}>💰</Text>
+            <Animated.Text
+              numberOfLines={1}
+              style={{
+                flex: 1,
+                opacity: labelOpacity,
+                marginLeft: spacing.sm,
+                color: colors.text,
+                fontFamily: fonts.bold,
+                fontSize: fontSize.lg,
+              }}
+            >
+              Mooney
+            </Animated.Text>
+          </>
+        )}
         <Pressable
           onPress={() => setCollapsed((c) => !c)}
           accessibilityRole="button"
@@ -140,8 +148,9 @@ export default function Sidebar() {
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
+                justifyContent: rowJustify,
                 height: dimensions.buttonHeight,
-                paddingHorizontal: spacing.sm + spacing.xs,
+                paddingHorizontal: rowPadding,
                 borderRadius: radii.md,
                 backgroundColor: active ? colors.primaryContainer : 'transparent',
               }}
@@ -151,18 +160,20 @@ export default function Sidebar() {
                 size={iconSize.lg}
                 color={active ? colors.primary : colors.textSecondary}
               />
-              <Animated.Text
-                numberOfLines={1}
-                style={{
-                  opacity: labelOpacity,
-                  marginLeft: spacing.sm,
-                  color: active ? colors.text : colors.textSecondary,
-                  fontFamily: active ? fonts.semibold : fonts.regular,
-                  fontSize: fontSize.base,
-                }}
-              >
-                {item.label}
-              </Animated.Text>
+              {!collapsed && (
+                <Animated.Text
+                  numberOfLines={1}
+                  style={{
+                    opacity: labelOpacity,
+                    marginLeft: spacing.sm,
+                    color: active ? colors.text : colors.textSecondary,
+                    fontFamily: active ? fonts.semibold : fonts.regular,
+                    fontSize: fontSize.base,
+                  }}
+                >
+                  {item.label}
+                </Animated.Text>
+              )}
             </Pressable>
           );
         })}
@@ -174,8 +185,9 @@ export default function Sidebar() {
           style={{
             flexDirection: 'row',
             alignItems: 'center',
+            justifyContent: rowJustify,
             height: dimensions.buttonHeight,
-            paddingHorizontal: spacing.xs,
+            paddingHorizontal: collapsed ? 0 : spacing.xs,
             marginTop: spacing.sm,
           }}
         >
@@ -193,20 +205,22 @@ export default function Sidebar() {
               {user.name.charAt(0)}
             </Text>
           </View>
-          <Animated.View style={{ flex: 1, opacity: labelOpacity, marginLeft: spacing.sm }}>
-            <Text
-              numberOfLines={1}
-              style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.md }}
-            >
-              {user.name}
-            </Text>
-            <Text
-              numberOfLines={1}
-              style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm }}
-            >
-              {ROLE_LABELS[user.role]}
-            </Text>
-          </Animated.View>
+          {!collapsed && (
+            <Animated.View style={{ flex: 1, opacity: labelOpacity, marginLeft: spacing.sm }}>
+              <Text
+                numberOfLines={1}
+                style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.md }}
+              >
+                {user.name}
+              </Text>
+              <Text
+                numberOfLines={1}
+                style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm }}
+              >
+                {ROLE_LABELS[user.role]}
+              </Text>
+            </Animated.View>
+          )}
         </View>
       )}
 
@@ -218,54 +232,29 @@ export default function Sidebar() {
         style={{
           flexDirection: 'row',
           alignItems: 'center',
+          justifyContent: rowJustify,
           height: dimensions.buttonHeight,
-          paddingHorizontal: spacing.sm + spacing.xs,
+          paddingHorizontal: rowPadding,
           borderRadius: radii.md,
           marginTop: spacing.xs,
         }}
       >
         <MaterialCommunityIcons name="logout" size={iconSize.lg} color={colors.error} />
-        <Animated.Text
-          numberOfLines={1}
-          style={{
-            opacity: labelOpacity,
-            marginLeft: spacing.sm,
-            color: colors.error,
-            fontFamily: fonts.semibold,
-            fontSize: fontSize.base,
-          }}
-        >
-          Log out
-        </Animated.Text>
+        {!collapsed && (
+          <Animated.Text
+            numberOfLines={1}
+            style={{
+              opacity: labelOpacity,
+              marginLeft: spacing.sm,
+              color: colors.error,
+              fontFamily: fonts.semibold,
+              fontSize: fontSize.base,
+            }}
+          >
+            Log out
+          </Animated.Text>
+        )}
       </Pressable>
-
-      {/* Footer */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: collapsed ? 'center' : 'space-between',
-          paddingTop: spacing.md,
-          marginTop: spacing.sm,
-          borderTopWidth: 1,
-          borderTopColor: colors.border,
-        }}
-      >
-        <Animated.Text
-          numberOfLines={1}
-          style={{
-            opacity: labelOpacity,
-            color: colors.textSecondary,
-            fontFamily: fonts.regular,
-            fontSize: fontSize.sm,
-            // Removed from layout flow when collapsed so the toggle stays centered.
-            position: collapsed ? 'absolute' : 'relative',
-          }}
-        >
-          Appearance
-        </Animated.Text>
-        <ThemeToggle />
-      </View>
     </Animated.View>
   );
 }

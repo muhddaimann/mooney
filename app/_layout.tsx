@@ -1,7 +1,9 @@
 import { Slot } from 'expo-router';
-import { PaperProvider, ActivityIndicator } from 'react-native-paper';
-import { View, LogBox } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
+import { View, LogBox, useColorScheme } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DesignProvider } from '../contexts/designContext';
+import { palettes } from '../constants/design';
 import {
   useFonts,
   SourceSansPro_400Regular,
@@ -16,6 +18,7 @@ LogBox.ignoreLogs([
 ]);
 
 export default function RootLayout() {
+  const scheme = useColorScheme();
   const [fontsLoaded] = useFonts({
     SourceSansPro_400Regular,
     SourceSansPro_600SemiBold,
@@ -23,18 +26,19 @@ export default function RootLayout() {
   });
 
   if (!fontsLoaded) {
+    const splash = palettes[scheme === 'dark' ? 'dark' : 'light'];
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0f172a' }}>
-        <ActivityIndicator size="large" color="#6366f1" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: splash.background }}>
+        <ActivityIndicator size="large" color={splash.primary} />
       </View>
     );
   }
 
   return (
-    <DesignProvider>
-      <PaperProvider>
+    <SafeAreaProvider>
+      <DesignProvider>
         <Slot />
-      </PaperProvider>
-    </DesignProvider>
+      </DesignProvider>
+    </SafeAreaProvider>
   );
 }

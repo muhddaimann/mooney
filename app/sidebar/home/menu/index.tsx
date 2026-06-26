@@ -1,15 +1,15 @@
 import React from 'react';
 import { Image, Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
 import { Button, Card, Text } from 'react-native-paper';
-import { useDesign } from '../../../contexts/designContext';
-import { useMenu } from '../../../contexts/menuContext';
-import { useOverlay } from '../../../contexts/overlayContext';
-import { catalogByCategory, catalogItem } from '../../../constants/menu';
-import MenuItemCard from '../../../components/menuItemCard';
-import OrderCheckout from '../../../components/orderCheckout';
+import { useDesign } from '../../../../contexts/designContext';
+import { useMenu } from '../../../../contexts/menuContext';
+import { useOverlay } from '../../../../contexts/overlayContext';
+import { catalogByCategory, catalogItem } from '../../../../constants/menu';
+import MenuItemCard from '../../../../components/menuItemCard';
+import OrderCheckout from '../../../../components/orderCheckout';
 
 // Reference receipt the catalog was transcribed from.
-const RECEIPT = require('../../../constants/receipt.jpeg');
+const RECEIPT = require('../../../../constants/receipt.jpeg');
 
 export default function MenuScreen() {
   const { colors, spacing, fonts, fontSize, radii, shadow, breakpoints } = useDesign();

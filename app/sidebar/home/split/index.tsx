@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { Button, Card, Text, TextInput } from 'react-native-paper';
 import { useRouter } from 'expo-router';
-import { useDesign } from '../../../contexts/designContext';
-import { useSplit } from '../../../contexts/splitContext';
-import { formatCurrency, groupTotal } from '../../../constants/split';
+import { useDesign } from '../../../../contexts/designContext';
+import { useSplit } from '../../../../contexts/splitContext';
+import { formatCurrency, groupTotal } from '../../../../constants/split';
 
 export default function SplitGroups() {
   const { colors, spacing, fonts, fontSize, radii, shadow } = useDesign();
@@ -19,7 +19,7 @@ export default function SplitGroups() {
     const group = createGroup(name, description);
     setName('');
     setDescription('');
-    router.push(`/sidebar/split/${group.id}`);
+    router.push(`/sidebar/home/split/${group.id}`);
   };
 
   return (
@@ -82,7 +82,7 @@ export default function SplitGroups() {
       ) : (
         <View style={{ gap: spacing.sm }}>
           {groups.map((group) => (
-            <Pressable key={group.id} onPress={() => router.push(`/sidebar/split/${group.id}`)}>
+            <Pressable key={group.id} onPress={() => router.push(`/sidebar/home/split/${group.id}`)}>
               <Card style={{ backgroundColor: colors.surface, borderRadius: radii.lg, padding: spacing.md, ...shadow.sm }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                   <View style={{ flex: 1 }}>

@@ -3,11 +3,11 @@ import { Pressable, ScrollView, View } from 'react-native';
 import { Button, Card, IconButton, Text, TextInput } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useDesign } from '../../../contexts/designContext';
-import { useSplit } from '../../../contexts/splitContext';
-import { useOverlay } from '../../../contexts/overlayContext';
-import { useGroupBalances } from '../../../hooks/useGroupBalances';
-import { formatCurrency, memberName } from '../../../constants/split';
+import { useDesign } from '../../../../contexts/designContext';
+import { useSplit } from '../../../../contexts/splitContext';
+import { useOverlay } from '../../../../contexts/overlayContext';
+import { useGroupBalances } from '../../../../hooks/useGroupBalances';
+import { formatCurrency, memberName } from '../../../../constants/split';
 
 export default function GroupDetail() {
   const { colors, spacing, fonts, fontSize, radii, shadow } = useDesign();
@@ -31,7 +31,7 @@ export default function GroupDetail() {
         <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.base }}>
           Group not found.
         </Text>
-        <Button textColor={colors.primary} onPress={() => router.replace('/sidebar/split')}>
+        <Button textColor={colors.primary} onPress={() => router.replace('/sidebar/home/split')}>
           Back to groups
         </Button>
       </View>
@@ -65,7 +65,7 @@ export default function GroupDetail() {
     });
     if (ok) {
       deleteGroup(group.id);
-      router.replace('/sidebar/split');
+      router.replace('/sidebar/home/split');
     }
   };
 

@@ -27,14 +27,14 @@ export default function HomeMain() {
       icon: 'silverware-fork-knife',
       title: 'Menu',
       description: 'Translate a bill into your share — pick what you ate and get the total with service charge & tax.',
-      href: '/sidebar/menu',
+      href: '/sidebar/home/menu',
     },
     {
       key: 'split',
       icon: 'call-split',
       title: 'Bill Split',
       description: 'Create a small group, enter transactions and who paid, then settle up who owes whom.',
-      href: '/sidebar/split',
+      href: '/sidebar/home/split',
     },
   ];
 
@@ -121,7 +121,7 @@ export default function HomeMain() {
               {recentGroups.map((g) => (
                 <Pressable
                   key={g.id}
-                  onPress={() => router.push(`/sidebar/split/${g.id}`)}
+                  onPress={() => router.push(`/sidebar/home/split/${g.id}`)}
                   style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}
                 >
                   <View
@@ -153,7 +153,7 @@ export default function HomeMain() {
               {/* Last menu order */}
               {lastOrderNames.length > 0 && (
                 <Pressable
-                  onPress={() => router.push('/sidebar/menu')}
+                  onPress={() => router.push('/sidebar/home/menu')}
                   style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}
                 >
                   <View

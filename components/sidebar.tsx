@@ -7,6 +7,7 @@ import { useDesign } from '../contexts/designContext';
 import { useAuth } from '../contexts/authContext';
 import { useOverlay } from '../contexts/overlayContext';
 import { ROLE_LABELS } from '../constants/auth';
+import Tooltip from './tooltip';
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 
@@ -84,8 +85,8 @@ export default function Sidebar() {
   const renderLeaf = (item: NavLeaf, indent: boolean) => {
     const active = isActive(item);
     return (
+      <Tooltip key={item.href} label={item.label}>
       <Pressable
-        key={item.href}
         onPress={() => router.push(item.href)}
         accessibilityRole="button"
         accessibilityState={{ selected: active }}
@@ -131,6 +132,7 @@ export default function Sidebar() {
           </Animated.Text>
         )}
       </Pressable>
+      </Tooltip>
     );
   };
 
@@ -239,11 +241,13 @@ export default function Sidebar() {
                       backgroundColor: active ? colors.primaryContainer : 'transparent',
                     }}
                   >
+                    <View style={{ flex: 1 }}>
+                    <Tooltip label={node.label}>
                     <Pressable
                       onPress={() => router.push(node.href)}
                       accessibilityRole="button"
                       accessibilityState={{ selected: active }}
-                      style={{ flex: 1, flexDirection: 'row', alignItems: 'center', height: '100%', paddingHorizontal: rowPadding }}
+                      style={{ width: '100%', flexDirection: 'row', alignItems: 'center', height: dimensions.buttonHeight, paddingHorizontal: rowPadding }}
                     >
                       <MaterialCommunityIcons
                         name={node.icon}
@@ -263,6 +267,8 @@ export default function Sidebar() {
                         {node.label}
                       </Animated.Text>
                     </Pressable>
+                    </Tooltip>
+                    </View>
                     <Pressable
                       onPress={() => setHomeOpen((o) => !o)}
                       accessibilityRole="button"
@@ -348,55 +354,62 @@ export default function Sidebar() {
         </View>
       )}
 
-      {/* Theme toggle (left) + reload (right) — fill the row equally */}
+      {/* Theme toggle (left) + reload (right) — fill the row equally.
+          flex lives on the wrapper View so Paper's tooltip wrapper can't break it. */}
       <View
         style={{
           flexDirection: collapsed ? 'column' : 'row',
+          alignItems: collapsed ? 'center' : 'stretch',
           gap: spacing.xs,
           marginTop: spacing.sm,
         }}
       >
-        <Pressable
-          onPress={toggleTheme}
-          accessibilityRole="button"
-          accessibilityLabel={mode === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-          style={{
-            flex: collapsed ? undefined : 1,
-            width: collapsed ? dimensions.iconButton : undefined,
-            height: dimensions.iconButton,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: radii.md,
-            backgroundColor: colors.surfaceVariant,
-            alignSelf: collapsed ? 'center' : 'auto',
-          }}
-        >
-          <MaterialCommunityIcons
-            name={mode === 'dark' ? 'weather-sunny' : 'weather-night'}
-            size={iconSize.md}
-            color={colors.text}
-          />
-        </Pressable>
-        <Pressable
-          onPress={reload}
-          accessibilityRole="button"
-          accessibilityLabel="Reload"
-          style={{
-            flex: collapsed ? undefined : 1,
-            width: collapsed ? dimensions.iconButton : undefined,
-            height: dimensions.iconButton,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: radii.md,
-            backgroundColor: colors.surfaceVariant,
-            alignSelf: collapsed ? 'center' : 'auto',
-          }}
-        >
-          <MaterialCommunityIcons name="refresh" size={iconSize.md} color={colors.textSecondary} />
-        </Pressable>
+        <View style={{ flex: collapsed ? undefined : 1 }}>
+          <Tooltip label={mode === 'dark' ? 'Light theme' : 'Dark theme'}>
+            <Pressable
+              onPress={toggleTheme}
+              accessibilityRole="button"
+              accessibilityLabel={mode === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+              style={{
+                width: collapsed ? dimensions.iconButton : '100%',
+                height: dimensions.iconButton,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: radii.md,
+                backgroundColor: colors.surfaceVariant,
+              }}
+            >
+              <MaterialCommunityIcons
+                name={mode === 'dark' ? 'weather-sunny' : 'weather-night'}
+                size={iconSize.md}
+                color={colors.text}
+              />
+            </Pressable>
+          </Tooltip>
+        </View>
+        <View style={{ flex: collapsed ? undefined : 1 }}>
+          <Tooltip label="Refresh">
+            <Pressable
+              onPress={reload}
+              accessibilityRole="button"
+              accessibilityLabel="Reload"
+              style={{
+                width: collapsed ? dimensions.iconButton : '100%',
+                height: dimensions.iconButton,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: radii.md,
+                backgroundColor: colors.surfaceVariant,
+              }}
+            >
+              <MaterialCommunityIcons name="refresh" size={iconSize.md} color={colors.textSecondary} />
+            </Pressable>
+          </Tooltip>
+        </View>
       </View>
 
       {/* Sign out */}
+      <Tooltip label="Log out">
       <Pressable
         onPress={handleLogout}
         accessibilityRole="button"
@@ -404,30 +417,16 @@ export default function Sidebar() {
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: rowJustify,
+          justifyContent: 'center',
           height: dimensions.buttonHeight,
-          paddingHorizontal: rowPadding,
           borderRadius: radii.md,
           marginTop: spacing.sm,
           backgroundColor: colors.errorContainer,
         }}
       >
         <MaterialCommunityIcons name="logout" size={iconSize.lg} color={colors.error} />
-        {!collapsed && (
-          <Animated.Text
-            numberOfLines={1}
-            style={{
-              opacity: labelOpacity,
-              marginLeft: spacing.sm,
-              color: colors.error,
-              fontFamily: fonts.semibold,
-              fontSize: fontSize.base,
-            }}
-          >
-            Log out
-          </Animated.Text>
-        )}
       </Pressable>
+      </Tooltip>
     </Animated.View>
   );
 }

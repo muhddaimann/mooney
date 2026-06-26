@@ -171,6 +171,10 @@ export const catalogItem = (id: string): CatalogItem | undefined =>
 export const SERVICE_CHARGE_RATE = 0.1;
 export const SERVICE_TAX_RATE = 0.06;
 
+/** Shared sheet where everyone ticks that they've paid and how much. */
+export const PAYMENT_RECORD_URL =
+  'https://daythreedigitalberhad.sharepoint.com/:x:/s/DigitalTransformationDepartment/IQBtE6APypp7Rrj6YRP84AT8AVJO68A1yVRClzKfw3pmKbs?e=DIkWdY';
+
 /** A chosen catalog item and how many. */
 export type OrderLine = {
   itemId: string;

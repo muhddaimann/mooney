@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { Image, Linking, ScrollView, View } from 'react-native';
 import { Button, Modal, Portal, Text, TextInput } from 'react-native-paper';
 import { useDesign } from '../contexts/designContext';
 import { useMenu } from '../contexts/menuContext';
 import { useOverlay } from '../contexts/overlayContext';
 import { useOrderTotals } from '../hooks/useOrderTotals';
-import { formatCurrency } from '../constants/menu';
+import { formatCurrency, PAYMENT_RECORD_URL } from '../constants/menu';
+
+// DuitNow / QR to pay.
+const PAY_IMAGE = require('../constants/pay.jpeg');
 
 type Step = 'idle' | 'name' | 'pay';
 
@@ -32,6 +35,12 @@ export default function OrderCheckout() {
     toast({ message: name ? `Saved ${name}'s bill` : 'Order saved', type: 'success' });
     clear();
     setStep('idle');
+  };
+
+  const openPaymentRecord = () => {
+    Linking.openURL(PAYMENT_RECORD_URL).catch(() =>
+      toast({ message: 'Could not open the payment sheet', type: 'error' }),
+    );
   };
 
   const modalCard = {
@@ -152,40 +161,66 @@ export default function OrderCheckout() {
 
         {/* Step 2 — what to pay */}
         <Modal visible={step === 'pay'} onDismiss={close} contentContainerStyle={modalCard}>
-          <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.base }}>
-            {name ? `This is how much you need to pay, ${name}` : 'This is how much you need to pay'}
-          </Text>
-          <Text style={{ color: colors.primary, fontFamily: fonts.bold, fontSize: fontSize.xxxl, marginBottom: spacing.md }}>
-            {formatCurrency(summary.grandTotal)}
-          </Text>
+          <ScrollView style={{ maxHeight: 520 }} showsVerticalScrollIndicator={false}>
+            <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.base }}>
+              {name ? `This is how much you need to pay, ${name}` : 'This is how much you need to pay'}
+            </Text>
+            <Text style={{ color: colors.primary, fontFamily: fonts.bold, fontSize: fontSize.xxxl, marginBottom: spacing.md }}>
+              {formatCurrency(summary.grandTotal)}
+            </Text>
 
-          <View style={{ gap: spacing.xs }}>
-            {row('Subtotal', formatCurrency(summary.subtotal))}
-            {charges.map((c) => row(c.name, formatCurrency(c.amount)))}
-          </View>
+            <View style={{ gap: spacing.xs }}>
+              {row('Subtotal', formatCurrency(summary.subtotal))}
+              {charges.map((c) => row(c.name, formatCurrency(c.amount)))}
+            </View>
 
-          <View style={{ height: 1, backgroundColor: colors.border, marginVertical: spacing.md }} />
+            <View style={{ height: 1, backgroundColor: colors.border, marginVertical: spacing.md }} />
 
-          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+            {/* Scan & pay */}
+            <Text style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.md, marginBottom: spacing.sm }}>
+              Scan to pay
+            </Text>
+            <Image
+              source={PAY_IMAGE}
+              resizeMode="contain"
+              style={{ width: '100%', height: 240, borderRadius: radii.md, backgroundColor: colors.surfaceVariant }}
+            />
+
+            {/* Record payment link */}
             <Button
-              mode="outlined"
-              textColor={colors.textSecondary}
-              style={{ flex: 1, borderRadius: radii.md, borderColor: colors.border }}
-              onPress={() => setStep('name')}
+              mode="text"
+              icon="open-in-new"
+              textColor={colors.primary}
+              labelStyle={{ fontFamily: fonts.semibold }}
+              style={{ marginTop: spacing.sm }}
+              onPress={openPaymentRecord}
             >
-              Back
+              {name ? `Tick that ${name} paid ${formatCurrency(summary.grandTotal)}` : 'Tick that you paid'}
             </Button>
-            <Button
-              mode="contained"
-              buttonColor={colors.primary}
-              textColor={colors.onPrimary}
-              labelStyle={{ fontFamily: fonts.bold }}
-              style={{ flex: 1, borderRadius: radii.md }}
-              onPress={handleSave}
-            >
-              Save
-            </Button>
-          </View>
+
+            <View style={{ height: 1, backgroundColor: colors.border, marginVertical: spacing.md }} />
+
+            <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+              <Button
+                mode="outlined"
+                textColor={colors.textSecondary}
+                style={{ flex: 1, borderRadius: radii.md, borderColor: colors.border }}
+                onPress={() => setStep('name')}
+              >
+                Back
+              </Button>
+              <Button
+                mode="contained"
+                buttonColor={colors.primary}
+                textColor={colors.onPrimary}
+                labelStyle={{ fontFamily: fonts.bold }}
+                style={{ flex: 1, borderRadius: radii.md }}
+                onPress={handleSave}
+              >
+                Save
+              </Button>
+            </View>
+          </ScrollView>
         </Modal>
       </Portal>
     </>

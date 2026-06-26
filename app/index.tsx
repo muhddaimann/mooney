@@ -32,12 +32,12 @@ export default function Login() {
 
   // Already signed in — skip the login screen.
   if (isAuthenticated) {
-    return <Redirect href="/sidebar/home/main" />;
+    return <Redirect href="/sidebar/home" />;
   }
 
   const handleSignIn = async (role: Role) => {
     await signInAs(role);
-    router.replace('/sidebar/home/main');
+    router.replace('/sidebar/home');
   };
 
   return (

@@ -250,30 +250,19 @@ export const OverlayProvider: React.FC<{ children: React.ReactNode }> = ({
             style={[StyleSheet.absoluteFill, styles.loadingRoot, { backgroundColor: colors.overlay }]}
             pointerEvents="auto"
           >
-            <View
-              style={{
-                backgroundColor: colors.surface,
-                paddingVertical: spacing.lg,
-                paddingHorizontal: spacing.xl,
-                borderRadius: radii.lg,
-                alignItems: 'center',
-                ...shadow.lg,
-              }}
-            >
-              <ActivityIndicator size="large" color={colors.primary} />
-              {loading.message ? (
-                <Text
-                  style={{
-                    marginTop: spacing.md,
-                    color: colors.text,
-                    fontFamily: fonts.semibold,
-                    fontSize: fontSize.base,
-                  }}
-                >
-                  {loading.message}
-                </Text>
-              ) : null}
-            </View>
+            <ActivityIndicator size="large" color={colors.primary} />
+            {loading.message ? (
+              <Text
+                style={{
+                  marginTop: spacing.md,
+                  color: colors.text,
+                  fontFamily: fonts.semibold,
+                  fontSize: fontSize.base,
+                }}
+              >
+                {loading.message}
+              </Text>
+            ) : null}
           </View>
         )}
 
@@ -282,7 +271,13 @@ export const OverlayProvider: React.FC<{ children: React.ReactNode }> = ({
           visible={dialog.visible}
           dismissable={dialog.kind === 'confirm'}
           onDismiss={() => settleDialog(false)}
-          style={{ backgroundColor: colors.surface, borderRadius: radii.lg }}
+          style={{
+            backgroundColor: colors.surface,
+            borderRadius: radii.lg,
+            alignSelf: 'center',
+            width: '100%',
+            maxWidth: dimensions.cardMaxWidth,
+          }}
         >
           {dialog.title ? (
             <Dialog.Title
@@ -346,7 +341,13 @@ export const OverlayProvider: React.FC<{ children: React.ReactNode }> = ({
           visible={toastState.visible}
           onDismiss={hideToast}
           duration={toastState.duration}
-          style={{ backgroundColor: toastColors[toastState.type], borderRadius: radii.md }}
+          style={{
+            backgroundColor: toastColors[toastState.type],
+            borderRadius: radii.md,
+            alignSelf: 'center',
+            width: '100%',
+            maxWidth: 480,
+          }}
           action={
             toastState.actionLabel
               ? {

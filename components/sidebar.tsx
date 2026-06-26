@@ -8,28 +8,43 @@ import { useAuth } from '../contexts/authContext';
 import { useOverlay } from '../contexts/overlayContext';
 import { ROLE_LABELS } from '../constants/auth';
 
-type NavItem = {
+type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+
+type NavLeaf = {
   label: string;
-  icon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  icon: IconName;
   /** Route navigated to on press. */
   href: string;
-  /** Path prefix used to decide whether the item is active. */
+  /** Path used to decide whether the item is active. */
   match: string;
-  /** Only shown to admins. */
-  adminOnly?: boolean;
+  /** Match the pathname exactly rather than by prefix. */
+  exact?: boolean;
 };
 
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', icon: 'home-variant', href: '/sidebar/home/main', match: '/sidebar/home/main' },
-  { label: 'Menu', icon: 'silverware-fork-knife', href: '/sidebar/home/menu', match: '/sidebar/home/menu' },
-  { label: 'Bill Split', icon: 'call-split', href: '/sidebar/home/split', match: '/sidebar/home/split' },
+type NavGroup = NavLeaf & { children: NavLeaf[] };
+
+const NAV_ITEMS: (NavLeaf | NavGroup)[] = [
+  {
+    label: 'Home',
+    icon: 'home-variant',
+    href: '/sidebar/home',
+    match: '/sidebar/home',
+    exact: true,
+    children: [
+      { label: 'Menu', icon: 'silverware-fork-knife', href: '/sidebar/home/menu', match: '/sidebar/home/menu' },
+      { label: 'Bill Split', icon: 'call-split', href: '/sidebar/home/split', match: '/sidebar/home/split' },
+    ],
+  },
   { label: 'Settings', icon: 'cog', href: '/sidebar/settings', match: '/sidebar/settings' },
 ];
+
+const flattenLeaves = (items: (NavLeaf | NavGroup)[]): NavLeaf[] =>
+  items.flatMap((n) => ('children' in n ? [n, ...n.children] : [n]));
 
 export default function Sidebar() {
   const { colors, spacing, radii, fonts, fontSize, dimensions, iconSize, shadow, duration } =
     useDesign();
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const { confirm } = useOverlay();
   const router = useRouter();
   const pathname = usePathname();
@@ -56,6 +71,68 @@ export default function Sidebar() {
   // When collapsed, every row centers its icon; expanded, rows are left-aligned.
   const rowJustify = collapsed ? 'center' : 'flex-start';
   const rowPadding = collapsed ? 0 : spacing.sm + spacing.xs;
+
+  const [homeOpen, setHomeOpen] = useState(true);
+  // Always reveal the children while you're on one of them.
+  const onHomeChild =
+    pathname.startsWith('/sidebar/home/menu') || pathname.startsWith('/sidebar/home/split');
+  const childrenVisible = homeOpen || onHomeChild;
+
+  const isActive = (item: NavLeaf) =>
+    item.exact ? pathname === item.match : pathname.startsWith(item.match);
+
+  const renderLeaf = (item: NavLeaf, indent: boolean) => {
+    const active = isActive(item);
+    return (
+      <Pressable
+        key={item.href}
+        onPress={() => router.push(item.href)}
+        accessibilityRole="button"
+        accessibilityState={{ selected: active }}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: rowJustify,
+          height: dimensions.buttonHeight,
+          marginLeft: indent && !collapsed ? spacing.md : 0,
+          paddingHorizontal: rowPadding,
+          borderRadius: radii.md,
+          backgroundColor: active ? colors.primaryContainer : 'transparent',
+        }}
+      >
+        {indent && !collapsed && (
+          <View
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: radii.pill,
+              marginRight: spacing.xs,
+              backgroundColor: active ? colors.primary : colors.borderStrong,
+            }}
+          />
+        )}
+        <MaterialCommunityIcons
+          name={item.icon}
+          size={indent ? iconSize.md : iconSize.lg}
+          color={active ? colors.primary : colors.textSecondary}
+        />
+        {!collapsed && (
+          <Animated.Text
+            numberOfLines={1}
+            style={{
+              opacity: labelOpacity,
+              marginLeft: spacing.sm,
+              color: active ? colors.text : colors.textSecondary,
+              fontFamily: active ? fonts.semibold : fonts.regular,
+              fontSize: fontSize.base,
+            }}
+          >
+            {item.label}
+          </Animated.Text>
+        )}
+      </Pressable>
+    );
+  };
 
   const handleLogout = async () => {
     const ok = await confirm({
@@ -137,46 +214,73 @@ export default function Sidebar() {
 
       {/* Nav */}
       <View style={{ gap: spacing.xs, flex: 1 }}>
-        {NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin).map((item) => {
-          const active = pathname.startsWith(item.match);
-          return (
-            <Pressable
-              key={item.href}
-              onPress={() => router.push(item.href)}
-              accessibilityRole="button"
-              accessibilityState={{ selected: active }}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: rowJustify,
-                height: dimensions.buttonHeight,
-                paddingHorizontal: rowPadding,
-                borderRadius: radii.md,
-                backgroundColor: active ? colors.primaryContainer : 'transparent',
-              }}
-            >
-              <MaterialCommunityIcons
-                name={item.icon}
-                size={iconSize.lg}
-                color={active ? colors.primary : colors.textSecondary}
-              />
-              {!collapsed && (
-                <Animated.Text
-                  numberOfLines={1}
-                  style={{
-                    opacity: labelOpacity,
-                    marginLeft: spacing.sm,
-                    color: active ? colors.text : colors.textSecondary,
-                    fontFamily: active ? fonts.semibold : fonts.regular,
-                    fontSize: fontSize.base,
-                  }}
-                >
-                  {item.label}
-                </Animated.Text>
-              )}
-            </Pressable>
-          );
-        })}
+        {collapsed
+          ? // Collapsed rail: flat icons, no accordion.
+            flattenLeaves(NAV_ITEMS).map((leaf) => renderLeaf(leaf, false))
+          : NAV_ITEMS.map((node) => {
+              if (!('children' in node)) return renderLeaf(node, false);
+              const active = isActive(node);
+              return (
+                <React.Fragment key={node.href}>
+                  {/* Accordion header */}
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      height: dimensions.buttonHeight,
+                      borderRadius: radii.md,
+                      backgroundColor: active ? colors.primaryContainer : 'transparent',
+                    }}
+                  >
+                    <Pressable
+                      onPress={() => router.push(node.href)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: active }}
+                      style={{ flex: 1, flexDirection: 'row', alignItems: 'center', height: '100%', paddingHorizontal: rowPadding }}
+                    >
+                      <MaterialCommunityIcons
+                        name={node.icon}
+                        size={iconSize.lg}
+                        color={active ? colors.primary : colors.textSecondary}
+                      />
+                      <Animated.Text
+                        numberOfLines={1}
+                        style={{
+                          opacity: labelOpacity,
+                          marginLeft: spacing.sm,
+                          color: active ? colors.text : colors.textSecondary,
+                          fontFamily: active ? fonts.semibold : fonts.regular,
+                          fontSize: fontSize.base,
+                        }}
+                      >
+                        {node.label}
+                      </Animated.Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => setHomeOpen((o) => !o)}
+                      accessibilityRole="button"
+                      accessibilityLabel={childrenVisible ? 'Collapse menu' : 'Expand menu'}
+                      hitSlop={spacing.xs}
+                      style={{
+                        width: dimensions.iconButton,
+                        height: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        name={childrenVisible ? 'chevron-down' : 'chevron-right'}
+                        size={iconSize.md}
+                        color={colors.textSecondary}
+                      />
+                    </Pressable>
+                  </View>
+
+                  {/* Accordion children */}
+                  {childrenVisible && node.children.map((child) => renderLeaf(child, true))}
+                </React.Fragment>
+              );
+            })}
       </View>
 
       {/* User identity */}

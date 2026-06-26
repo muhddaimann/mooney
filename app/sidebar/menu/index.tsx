@@ -5,7 +5,7 @@ import { useDesign } from '../../../contexts/designContext';
 import { useMenu } from '../../../contexts/menuContext';
 import { catalogByCategory, catalogItem } from '../../../constants/menu';
 import MenuItemCard from '../../../components/menuItemCard';
-import OrderSummary from '../../../components/orderSummary';
+import OrderCheckout from '../../../components/orderCheckout';
 
 export default function MenuScreen() {
   const { colors, spacing, fonts, fontSize, radii, shadow } = useDesign();
@@ -69,8 +69,8 @@ export default function MenuScreen() {
         </View>
       </ScrollView>
 
-      {/* Sticky bill */}
-      <OrderSummary />
+      {/* Checkout: Next → name → payment */}
+      <OrderCheckout />
     </View>
   );
 }

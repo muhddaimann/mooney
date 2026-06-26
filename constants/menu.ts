@@ -3,21 +3,21 @@
  * ----------------------------------
  * Bill-split divides a known total; this builds a total up from chosen items:
  * pick what you ate → line subtotals → charges (service charge, tax) → grand
- * total, modelled on a real receipt:
+ * total, modelled on the real Sunthai receipt in constants/receipt.jpeg:
  *
  *   Sunthai
- *   ├── Main
- *   │   ├── Tom Yum Fried Rice ×2 .......... RM27.80
- *   │   └── Pad Thai Seafood ×1 ............ RM17.90
- *   ├── Drinks
- *   │   └── Thai Milk Tea ×1 ............... RM7.10
+ *   ├── Tomyum Fried Rice (Seafood) ×2 ..... RM27.90
+ *   ├── Thai Milk Tea ×9 ................... RM71.10
+ *   ├── Set for 4 Person ×1 ............... RM99.90   (set — not itemised)
+ *   ├── ...
  *   └── Bill
  *       ├── Subtotal .................. RM820.00
  *       ├── Service Charge (10%) ...... RM82.00
  *       ├── Service Tax (6%) .......... RM49.20
  *       └── Net Total ................. RM951.20
  *
- * The CATALOG below is reference data (you need items to show). The user's
+ * The CATALOG below is reference data transcribed from that receipt. The set
+ * is a single line — its contents are intentionally not broken out. The user's
  * selection lives in menuContext and starts empty.
  */
 
@@ -115,21 +115,49 @@ export type CatalogItem = {
   emoji?: string;
 };
 
+// Transcribed from the Sunthai receipt (constants/receipt.jpeg). Item codes
+// from the receipt are kept as ids; unit prices are derived from each line's
+// total ÷ quantity. The set is a single line — its contents aren't itemised.
 export const CATALOG: CatalogItem[] = [
-  { id: 'set_4pax', name: 'Set for 4 Person', category: 'set', unitPrice: 99.9, emoji: '🍱' },
-  { id: 'tom_yum_fried_rice', name: 'Tom Yum Fried Rice', category: 'main', unitPrice: 13.9, emoji: '🍚' },
-  { id: 'pad_thai_seafood', name: 'Pad Thai Seafood', category: 'main', unitPrice: 17.9, emoji: '🍤' },
-  { id: 'pad_kra_pao', name: 'Pad Kra Pao with Rice', category: 'main', unitPrice: 15.9, emoji: '🌶️' },
-  { id: 'garlic_chicken', name: 'Fried Garlic Chicken', category: 'main', unitPrice: 17.4, emoji: '🍗' },
-  { id: 'pineapple_fried_rice', name: 'Pineapple Fried Rice', category: 'main', unitPrice: 13.9, emoji: '🍍' },
-  { id: 'white_rice', name: 'White Rice', category: 'side', unitPrice: 3.0, emoji: '🍚' },
-  { id: 'fried_egg', name: 'Fried Egg', category: 'side', unitPrice: 2.0, emoji: '🍳' },
-  { id: 'kailan', name: 'Stir Fried Kailan', category: 'side', unitPrice: 12.9, emoji: '🥬' },
-  { id: 'mango_sticky_rice', name: 'Mango Sticky Rice', category: 'dessert', unitPrice: 11.9, emoji: '🥭' },
-  { id: 'banana_roti', name: 'Banana Roti + Nutella', category: 'dessert', unitPrice: 7.9, emoji: '🍌' },
-  { id: 'thai_milk_tea', name: 'Thai Milk Tea', category: 'drink', unitPrice: 7.1, emoji: '🧋' },
-  { id: 'lime_juice', name: 'Lime Juice', category: 'drink', unitPrice: 6.9, emoji: '🍋' },
-  { id: 'berry_juice', name: 'Berry Juice', category: 'drink', unitPrice: 11.0, emoji: '🫐' },
+  // Set
+  { id: 's009', name: 'Set for 4 Person', category: 'set', unitPrice: 99.9, emoji: '🍱' },
+
+  // Mains
+  { id: '080', name: 'Tomyum Fried Rice (Seafood)', category: 'main', unitPrice: 13.95, emoji: '🍚' },
+  { id: '081', name: 'Pineapple Fried Rice', category: 'main', unitPrice: 13.9, emoji: '🍍' },
+  { id: '100', name: 'Pad Thai (Seafood)', category: 'main', unitPrice: 17.9, emoji: '🍤' },
+  { id: '091', name: 'Pad Kra Pao with Rice', category: 'main', unitPrice: 14.9, emoji: '🌶️' },
+  { id: '092', name: 'Pad Kreng Keng with Rice', category: 'main', unitPrice: 14.9, emoji: '🍛' },
+  { id: '097', name: 'Thai Sauce Chicken Chop', category: 'main', unitPrice: 14.9, emoji: '🍗' },
+  { id: '099', name: 'Sweet & Sour Chicken Chop', category: 'main', unitPrice: 14.9, emoji: '🍗' },
+  { id: '045', name: 'Fried Garlic Chicken', category: 'main', unitPrice: 17.9, emoji: '🧄' },
+  { id: '094', name: 'Fried Garlic Chicken with Rice', category: 'main', unitPrice: 14.9, emoji: '🍗' },
+  { id: '095', name: 'Fried Garlic Beef with Rice', category: 'main', unitPrice: 15.9, emoji: '🥩' },
+  { id: '096', name: 'Stir Fried Petai Chicken', category: 'main', unitPrice: 14.9, emoji: '🫛' },
+  { id: '104', name: 'Stir Fried Glass Noodle', category: 'main', unitPrice: 22.9, emoji: '🍜' },
+  { id: '106', name: 'Tomyum Soup (Glass Noodle, Seafood)', category: 'main', unitPrice: 26.0, emoji: '🍲' },
+  { id: '132', name: 'Fish Ball & Chicken Meat', category: 'main', unitPrice: 21.9, emoji: '🍢' },
+
+  // Sides
+  { id: '126', name: 'White Rice', category: 'side', unitPrice: 3.0, emoji: '🍚' },
+  { id: '127', name: 'Fried Egg', category: 'side', unitPrice: 2.0, emoji: '🍳' },
+
+  // Desserts
+  { id: '122', name: 'Fruit Bowl', category: 'dessert', unitPrice: 3.0, emoji: '🍉' },
+  { id: 'r12', name: 'Thai Kaya Toast (2 Pcs)', category: 'dessert', unitPrice: 5.0, emoji: '🍞' },
+  { id: 'r11', name: 'Thai Kaya Toast (1 Pc)', category: 'dessert', unitPrice: 3.0, emoji: '🍞' },
+  { id: 'r3', name: 'Banana Roti + Nutella', category: 'dessert', unitPrice: 7.9, emoji: '🍌' },
+  { id: 'r4', name: 'Banana Roti + Both Topping', category: 'dessert', unitPrice: 7.9, emoji: '🍌' },
+  { id: 'r2', name: 'Banana Roti + Condensed Milk', category: 'dessert', unitPrice: 7.9, emoji: '🍌' },
+
+  // Drinks
+  { id: '801', name: 'Thai Milk Tea', category: 'drink', unitPrice: 7.9, emoji: '🧋' },
+  { id: '802', name: 'Thai Green Milk Tea', category: 'drink', unitPrice: 11.9, emoji: '🍵' },
+  { id: 'b03', name: 'Lime Juice', category: 'drink', unitPrice: 6.9, emoji: '🍋' },
+  { id: '810', name: 'Watermelon Juice', category: 'drink', unitPrice: 8.9, emoji: '🍉' },
+  { id: '823', name: 'Plum Soda', category: 'drink', unitPrice: 9.9, emoji: '🥤' },
+  { id: '830', name: 'Mango Ice Blended', category: 'drink', unitPrice: 10.9, emoji: '🥭' },
+  { id: '858', name: 'Sky Juice', category: 'drink', unitPrice: 1.0, emoji: '💧' },
 ];
 
 export const catalogItem = (id: string): CatalogItem | undefined =>

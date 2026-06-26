@@ -83,6 +83,12 @@ export type OverlayContextValue = {
   windowOpen: boolean;
   windowContent: React.ReactNode;
   windowTitle?: string;
+  /**
+   * Bump a global refresh signal. Screens watch `refreshNonce` and re-run their
+   * skeleton load — a refresh shows skeletons, not the blocking loader.
+   */
+  triggerRefresh: () => void;
+  refreshNonce: number;
 };
 
 export type WindowOptions = {
@@ -159,6 +165,7 @@ export const OverlayProvider: React.FC<{ children: React.ReactNode }> = ({
     open: false,
     content: null,
   });
+  const [refreshNonce, setRefreshNonce] = useState(0);
 
   // Pending promise resolver for the active dialog.
   const dialogResolve = useRef<((value: boolean) => void) | null>(null);
@@ -258,6 +265,8 @@ export const OverlayProvider: React.FC<{ children: React.ReactNode }> = ({
   );
   const closeWindow = useCallback(() => setWindowState((w) => ({ ...w, open: false })), []);
 
+  const triggerRefresh = useCallback(() => setRefreshNonce((n) => n + 1), []);
+
   const value = useMemo<OverlayContextValue>(
     () => ({
       showLoading,
@@ -273,6 +282,8 @@ export const OverlayProvider: React.FC<{ children: React.ReactNode }> = ({
       windowOpen: windowState.open,
       windowContent: windowState.content,
       windowTitle: windowState.title,
+      triggerRefresh,
+      refreshNonce,
     }),
     [
       showLoading,
@@ -286,6 +297,8 @@ export const OverlayProvider: React.FC<{ children: React.ReactNode }> = ({
       openWindow,
       closeWindow,
       windowState,
+      triggerRefresh,
+      refreshNonce,
     ],
   );
 

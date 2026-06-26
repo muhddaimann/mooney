@@ -1,16 +1,36 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useDesign } from '../../../contexts/designContext';
 import { useOverlay } from '../../../contexts/overlayContext';
+import { Skeleton } from '../../../components/skeleton';
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 
 export default function HomeDemo() {
   const { colors, spacing, fonts, fontSize, radii, shadow, iconSize, dimensions } = useDesign();
-  const { confirm, alert, showLoading, hideLoading, toast, showModal, hideModal, openWindow } =
+  const { confirm, alert, showLoading, hideLoading, toast, showModal, hideModal, openWindow, refreshNonce } =
     useOverlay();
+
+  // The list skeletons on first load and on every refresh (local or sidebar).
+  const [listLoading, setListLoading] = useState(true);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const loadList = () => {
+    if (timer.current) clearTimeout(timer.current);
+    setListLoading(true);
+    timer.current = setTimeout(() => setListLoading(false), 1200);
+  };
+
+  // Re-run on mount (nonce 0) and on every sidebar refresh.
+  useEffect(() => {
+    loadList();
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshNonce]);
 
   const demoLoading = () => {
     showLoading('Loading…');
@@ -83,11 +103,21 @@ export default function HomeDemo() {
     { icon: 'gesture-tap-button', title: 'Toast · with action', subtitle: 'Includes a tappable action', accent: colors.primary, onPress: () => toast({ message: 'Item archived', type: 'info', actionLabel: 'Undo', onAction: () => toast({ message: 'Restored', type: 'success' }) }) },
     { icon: 'card-text', title: 'Modal', subtitle: 'Custom content in a centered card', accent: colors.secondary, onPress: demoModal },
     { icon: 'dock-right', title: 'Window', subtitle: 'Right-side panel — pushes content left', accent: colors.secondary, onPress: demoWindow },
+    { icon: 'view-agenda-outline', title: 'Skeleton', subtitle: 'Placeholder rows while content loads', accent: colors.info, onPress: loadList },
   ];
+
+  const rowBase = {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+  } as const;
 
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: spacing.lg, alignItems: 'center' }}>
       <View style={{ width: '100%', maxWidth: 640, gap: spacing.lg }}>
+        {/* Header */}
         <View>
           <Text style={{ color: colors.text, fontFamily: fonts.bold, fontSize: fontSize.xxl }}>
             🧪 Overlay demo
@@ -97,6 +127,7 @@ export default function HomeDemo() {
           </Text>
         </View>
 
+        {/* The list itself skeletons while loading */}
         <View
           style={{
             backgroundColor: colors.surface,
@@ -107,43 +138,48 @@ export default function HomeDemo() {
             ...shadow.sm,
           }}
         >
-          {rows.map((r, i) => (
-            <Pressable
-              key={r.title}
-              onPress={r.onPress}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: spacing.md,
-                paddingVertical: spacing.md,
-                paddingHorizontal: spacing.lg,
-                borderTopWidth: i === 0 ? 0 : 1,
-                borderTopColor: colors.border,
-              }}
-            >
-              <View
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: radii.md,
-                  backgroundColor: colors.surfaceVariant,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <MaterialCommunityIcons name={r.icon} size={iconSize.md} color={r.accent} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.base }}>
-                  {r.title}
-                </Text>
-                <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm }}>
-                  {r.subtitle}
-                </Text>
-              </View>
-              <MaterialCommunityIcons name="chevron-right" size={iconSize.md} color={colors.textSecondary} />
-            </Pressable>
-          ))}
+          {rows.map((r, i) => {
+            const divider = { borderTopWidth: i === 0 ? 0 : 1, borderTopColor: colors.border };
+
+            if (listLoading) {
+              return (
+                <View key={r.title} style={{ ...rowBase, ...divider }}>
+                  <Skeleton height={40} width={40} radius={radii.md} />
+                  <View style={{ flex: 1, gap: spacing.xs }}>
+                    <Skeleton height={14} width="50%" />
+                    <Skeleton height={12} width="72%" />
+                  </View>
+                  <Skeleton circle height={18} />
+                </View>
+              );
+            }
+
+            return (
+              <Pressable key={r.title} onPress={r.onPress} style={{ ...rowBase, ...divider }}>
+                <View
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: radii.md,
+                    backgroundColor: colors.surfaceVariant,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <MaterialCommunityIcons name={r.icon} size={iconSize.md} color={r.accent} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.base }}>
+                    {r.title}
+                  </Text>
+                  <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm }}>
+                    {r.subtitle}
+                  </Text>
+                </View>
+                <MaterialCommunityIcons name="chevron-right" size={iconSize.md} color={colors.textSecondary} />
+              </Pressable>
+            );
+          })}
         </View>
       </View>
     </ScrollView>

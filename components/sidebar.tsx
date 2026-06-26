@@ -45,7 +45,7 @@ export default function Sidebar() {
   const { colors, spacing, radii, fonts, fontSize, dimensions, iconSize, shadow, duration, mode, toggleTheme } =
     useDesign();
   const { user, signOut } = useAuth();
-  const { confirm, showLoading, hideLoading } = useOverlay();
+  const { confirm, triggerRefresh, showLoading, hideLoading } = useOverlay();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -148,7 +148,8 @@ export default function Sidebar() {
   };
 
   const reload = () => {
-    // For now just exercise the loading overlay (page reload comes later).
+    // Global refresh: loader + skeletons run together for the same duration.
+    triggerRefresh();
     showLoading('Refreshing…');
     setTimeout(hideLoading, 1200);
   };

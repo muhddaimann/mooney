@@ -9,7 +9,10 @@ type Props = {
   item: CatalogItem;
 };
 
-/** A selectable menu item with an inline quantity stepper. */
+/**
+ * Compact, vertical menu card sized to sit in a wrapping grid (not full width).
+ * Shows an Add button when unselected, a −/qty/+ stepper once chosen.
+ */
 export default function MenuItemCard({ item }: Props) {
   const { colors, spacing, radii, fonts, fontSize, shadow } = useDesign();
   const { quantityOf, addItem, decrement } = useMenu();
@@ -17,33 +20,36 @@ export default function MenuItemCard({ item }: Props) {
   const selected = qty > 0;
 
   return (
-    <Pressable onPress={() => addItem(item.id)}>
+    <Pressable onPress={() => addItem(item.id)} style={{ flexGrow: 1, flexBasis: 150, maxWidth: 220 }}>
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
           backgroundColor: colors.surface,
           borderRadius: radii.lg,
           borderWidth: 1,
           borderColor: selected ? colors.primary : colors.border,
           padding: spacing.md,
-          gap: spacing.sm,
+          gap: spacing.xs,
           ...shadow.sm,
         }}
       >
-        <Text style={{ fontSize: fontSize.xl }}>{item.emoji ?? '🍽️'}</Text>
+        <Text style={{ fontSize: fontSize.xxl }}>{item.emoji ?? '🍽️'}</Text>
 
-        <View style={{ flex: 1 }}>
-          <Text numberOfLines={1} style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.base }}>
-            {item.name}
-          </Text>
-          <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm }}>
-            {formatCurrency(item.unitPrice)}
-          </Text>
-        </View>
+        <Text numberOfLines={1} style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.base }}>
+          {item.name}
+        </Text>
+        <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm }}>
+          {formatCurrency(item.unitPrice)}
+        </Text>
 
         {selected ? (
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginTop: spacing.xs,
+            }}
+          >
             <IconButton
               icon="minus"
               size={16}
@@ -52,9 +58,7 @@ export default function MenuItemCard({ item }: Props) {
               iconColor={colors.text}
               onPress={() => decrement(item.id)}
             />
-            <Text style={{ minWidth: 24, textAlign: 'center', color: colors.text, fontFamily: fonts.bold, fontSize: fontSize.base }}>
-              {qty}
-            </Text>
+            <Text style={{ color: colors.text, fontFamily: fonts.bold, fontSize: fontSize.lg }}>{qty}</Text>
             <IconButton
               icon="plus"
               size={16}
@@ -65,14 +69,20 @@ export default function MenuItemCard({ item }: Props) {
             />
           </View>
         ) : (
-          <IconButton
-            icon="plus"
-            size={18}
-            mode="contained-tonal"
-            containerColor={colors.primaryContainer}
-            iconColor={colors.primary}
-            onPress={() => addItem(item.id)}
-          />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: spacing.xs,
+              marginTop: spacing.xs,
+              height: 36,
+              borderRadius: radii.md,
+              backgroundColor: colors.primaryContainer,
+            }}
+          >
+            <Text style={{ color: colors.primary, fontFamily: fonts.semibold, fontSize: fontSize.md }}>＋ Add</Text>
+          </View>
         )}
       </View>
     </Pressable>

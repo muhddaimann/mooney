@@ -102,6 +102,8 @@ export const MenuProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const value = useMemo<MenuContextValue>(
     () => ({
       lines,
+      payerName,
+      setPayerName,
       lastOrder,
       isHydrated,
       quantityOf,
@@ -115,6 +117,7 @@ export const MenuProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }),
     [
       lines,
+      payerName,
       lastOrder,
       isHydrated,
       quantityOf,

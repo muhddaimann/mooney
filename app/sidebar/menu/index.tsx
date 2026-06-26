@@ -19,50 +19,54 @@ export default function MenuScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: spacing.lg, gap: spacing.lg }}>
-        {/* Prompt */}
-        <View>
-          <Text style={{ color: colors.text, fontFamily: fonts.bold, fontSize: fontSize.xxl }}>
-            What did you eat last time?
-          </Text>
-          <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.base, marginTop: spacing.xs }}>
-            Tap items to rebuild your bill — we’ll add service charge & tax.
-          </Text>
-        </View>
-
-        {/* Recall last order */}
-        {lastNames.length > 0 && (
-          <Card style={{ backgroundColor: colors.primaryContainer, borderRadius: radii.lg, padding: spacing.md, ...shadow.sm }}>
-            <Text style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.md }}>
-              Last time you had
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: spacing.lg, alignItems: 'center' }}>
+        <View style={{ width: '100%', maxWidth: 760, gap: spacing.lg }}>
+          {/* Prompt */}
+          <View>
+            <Text style={{ color: colors.text, fontFamily: fonts.bold, fontSize: fontSize.xxl }}>
+              What did you eat last time?
             </Text>
-            <Text numberOfLines={2} style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm, marginVertical: spacing.xs }}>
-              {lastNames.join(', ')}
+            <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.base, marginTop: spacing.xs }}>
+              Tap items to rebuild your bill — we’ll add service charge & tax.
             </Text>
-            <Button
-              mode="contained"
-              buttonColor={colors.primary}
-              textColor={colors.onPrimary}
-              labelStyle={{ fontFamily: fonts.semibold }}
-              style={{ borderRadius: radii.md, alignSelf: 'flex-start' }}
-              onPress={reorderLast}
-            >
-              Order again
-            </Button>
-          </Card>
-        )}
-
-        {/* Catalog by category */}
-        {sections.map((section) => (
-          <View key={section.category} style={{ gap: spacing.sm }}>
-            <Text style={{ color: colors.textSecondary, fontFamily: fonts.semibold, fontSize: fontSize.md }}>
-              {section.label}
-            </Text>
-            {section.items.map((item) => (
-              <MenuItemCard key={item.id} item={item} />
-            ))}
           </View>
-        ))}
+
+          {/* Recall last order */}
+          {lastNames.length > 0 && (
+            <Card style={{ backgroundColor: colors.primaryContainer, borderRadius: radii.lg, padding: spacing.md, ...shadow.sm }}>
+              <Text style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.md }}>
+                Last time you had
+              </Text>
+              <Text numberOfLines={2} style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm, marginVertical: spacing.xs }}>
+                {lastNames.join(', ')}
+              </Text>
+              <Button
+                mode="contained"
+                buttonColor={colors.primary}
+                textColor={colors.onPrimary}
+                labelStyle={{ fontFamily: fonts.semibold }}
+                style={{ borderRadius: radii.md, alignSelf: 'flex-start' }}
+                onPress={reorderLast}
+              >
+                Order again
+              </Button>
+            </Card>
+          )}
+
+          {/* Catalog by category — wrapping card grid */}
+          {sections.map((section) => (
+            <View key={section.category} style={{ gap: spacing.sm }}>
+              <Text style={{ color: colors.textSecondary, fontFamily: fonts.semibold, fontSize: fontSize.md }}>
+                {section.label}
+              </Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+                {section.items.map((item) => (
+                  <MenuItemCard key={item.id} item={item} />
+                ))}
+              </View>
+            </View>
+          ))}
+        </View>
       </ScrollView>
 
       {/* Sticky bill */}

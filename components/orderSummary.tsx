@@ -1,46 +1,34 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { Button, Text, TextInput } from 'react-native-paper';
 import { useDesign } from '../contexts/designContext';
 import { useMenu } from '../contexts/menuContext';
 import { useOverlay } from '../contexts/overlayContext';
 import { useOrderTotals } from '../hooks/useOrderTotals';
 import { formatCurrency } from '../constants/menu';
 
-/** Sticky bill: subtotal → charges → grand total, with save / clear actions. */
+/**
+ * Sticky bill: name → subtotal → charges → a personalised "you need to pay"
+ * callout, with save / clear actions.
+ */
 export default function OrderSummary() {
   const { colors, spacing, radii, fonts, fontSize, shadow } = useDesign();
-  const { clear, saveOrder } = useMenu();
+  const { clear, saveOrder, payerName, setPayerName } = useMenu();
   const { toast } = useOverlay();
   const { items, charges, summary } = useOrderTotals();
 
   const empty = items.length === 0;
+  const name = payerName.trim();
 
   const handleSave = async () => {
     await saveOrder();
     toast({ message: 'Saved as your last order', type: 'success' });
   };
 
-  const row = (label: string, value: string, strong = false) => (
+  const row = (label: string, value: string) => (
     <View key={label} style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-      <Text
-        style={{
-          color: strong ? colors.text : colors.textSecondary,
-          fontFamily: strong ? fonts.bold : fonts.regular,
-          fontSize: strong ? fontSize.lg : fontSize.md,
-        }}
-      >
-        {label}
-      </Text>
-      <Text
-        style={{
-          color: strong ? colors.primary : colors.text,
-          fontFamily: strong ? fonts.bold : fonts.semibold,
-          fontSize: strong ? fontSize.lg : fontSize.md,
-        }}
-      >
-        {value}
-      </Text>
+      <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.md }}>{label}</Text>
+      <Text style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.md }}>{value}</Text>
     </View>
   );
 
@@ -53,7 +41,7 @@ export default function OrderSummary() {
         borderTopLeftRadius: radii.xl,
         borderTopRightRadius: radii.xl,
         padding: spacing.lg,
-        gap: spacing.xs,
+        gap: spacing.sm,
         ...shadow.xl,
       }}
     >
@@ -62,13 +50,38 @@ export default function OrderSummary() {
           No items yet — tap to start your bill.
         </Text>
       ) : (
-        <>
-          {row('Subtotal', formatCurrency(summary.subtotal))}
-          {charges.map((c) => row(c.name, formatCurrency(c.amount)))}
-          <View style={{ height: 1, backgroundColor: colors.border, marginVertical: spacing.xs }} />
-          {row('Net Total', formatCurrency(summary.grandTotal), true)}
+        <View style={{ gap: spacing.sm, width: '100%', maxWidth: 520, alignSelf: 'center' }}>
+          <View style={{ gap: spacing.xs }}>
+            {row('Subtotal', formatCurrency(summary.subtotal))}
+            {charges.map((c) => row(c.name, formatCurrency(c.amount)))}
+          </View>
 
-          <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md }}>
+          <TextInput
+            mode="outlined"
+            label="Your name"
+            value={payerName}
+            onChangeText={setPayerName}
+            left={<TextInput.Icon icon="account" />}
+            dense
+          />
+
+          {/* Personalised callout */}
+          <View
+            style={{
+              backgroundColor: colors.primaryContainer,
+              borderRadius: radii.lg,
+              padding: spacing.md,
+            }}
+          >
+            <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm }}>
+              {name ? `This is how much you need to pay, ${name}` : 'This is how much you need to pay'}
+            </Text>
+            <Text style={{ color: colors.primary, fontFamily: fonts.bold, fontSize: fontSize.xxl }}>
+              {formatCurrency(summary.grandTotal)}
+            </Text>
+          </View>
+
+          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
             <Button
               mode="outlined"
               textColor={colors.textSecondary}
@@ -85,10 +98,10 @@ export default function OrderSummary() {
               style={{ flex: 1, borderRadius: radii.md }}
               onPress={handleSave}
             >
-              {`Save · ${formatCurrency(summary.grandTotal)}`}
+              Save
             </Button>
           </View>
-        </>
+        </View>
       )}
     </View>
   );

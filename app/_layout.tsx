@@ -6,6 +6,7 @@ import { DesignProvider } from '../contexts/designContext';
 import { AuthProvider } from '../contexts/authContext';
 import { OverlayProvider } from '../contexts/overlayContext';
 import { SplitProvider } from '../contexts/splitContext';
+import { MenuProvider } from '../contexts/menuContext';
 import { palettes } from '../constants/design';
 import {
   useFonts,
@@ -46,7 +47,9 @@ export default function RootLayout() {
         <AuthProvider>
           <OverlayProvider>
             <SplitProvider>
-              <Slot />
+              <MenuProvider>
+                <Slot />
+              </MenuProvider>
             </SplitProvider>
           </OverlayProvider>
         </AuthProvider>

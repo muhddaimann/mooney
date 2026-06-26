@@ -16,6 +16,7 @@ const NAMESPACE = 'mooney';
 export const StorageKeys = {
   themePreference: `${NAMESPACE}:theme-preference`,
   session: `${NAMESPACE}:session`,
+  menuLastOrder: `${NAMESPACE}:menu-last-order`,
 } as const;
 
 export type StorageKey = (typeof StorageKeys)[keyof typeof StorageKeys];

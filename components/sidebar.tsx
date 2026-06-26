@@ -22,6 +22,7 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Home', icon: 'home-variant', href: '/sidebar/home/main', match: '/sidebar/home' },
+  { label: 'Menu', icon: 'silverware-fork-knife', href: '/sidebar/menu', match: '/sidebar/menu' },
   { label: 'Bill Split', icon: 'call-split', href: '/sidebar/split', match: '/sidebar/split', adminOnly: true },
   { label: 'Settings', icon: 'cog', href: '/sidebar/settings', match: '/sidebar/settings' },
 ];

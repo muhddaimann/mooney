@@ -1,12 +1,6 @@
-import { Redirect, Slot } from 'expo-router';
-import { useAuth } from '../../../contexts/authContext';
+import { Slot } from 'expo-router';
 
-/** Bill split is admin-only. Non-admins are sent back to Home. */
+/** Bill split is available to all signed-in users (auth is enforced by the parent layout). */
 export default function SplitLayout() {
-  const { isAdmin, isHydrated } = useAuth();
-
-  if (!isHydrated) return null;
-  if (!isAdmin) return <Redirect href="/sidebar/home/main" />;
-
   return <Slot />;
 }

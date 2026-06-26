@@ -5,6 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DesignProvider } from '../contexts/designContext';
 import { AuthProvider } from '../contexts/authContext';
 import { OverlayProvider } from '../contexts/overlayContext';
+import { SplitProvider } from '../contexts/splitContext';
 import { palettes } from '../constants/design';
 import {
   useFonts,
@@ -44,7 +45,9 @@ export default function RootLayout() {
       <DesignProvider>
         <AuthProvider>
           <OverlayProvider>
-            <Slot />
+            <SplitProvider>
+              <Slot />
+            </SplitProvider>
           </OverlayProvider>
         </AuthProvider>
       </DesignProvider>

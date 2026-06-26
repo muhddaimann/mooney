@@ -16,17 +16,20 @@ type NavItem = {
   href: string;
   /** Path prefix used to decide whether the item is active. */
   match: string;
+  /** Only shown to admins. */
+  adminOnly?: boolean;
 };
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Home', icon: 'home-variant', href: '/sidebar/home/main', match: '/sidebar/home' },
+  { label: 'Bill Split', icon: 'call-split', href: '/sidebar/split', match: '/sidebar/split', adminOnly: true },
   { label: 'Settings', icon: 'cog', href: '/sidebar/settings', match: '/sidebar/settings' },
 ];
 
 export default function Sidebar() {
   const { colors, spacing, radii, fonts, fontSize, dimensions, iconSize, shadow, duration } =
     useDesign();
-  const { user, signOut } = useAuth();
+  const { user, isAdmin, signOut } = useAuth();
   const { confirm } = useOverlay();
   const router = useRouter();
   const pathname = usePathname();
@@ -125,7 +128,7 @@ export default function Sidebar() {
 
       {/* Nav */}
       <View style={{ gap: spacing.xs, flex: 1 }}>
-        {NAV_ITEMS.map((item) => {
+        {NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin).map((item) => {
           const active = pathname.startsWith(item.match);
           return (
             <Pressable

@@ -23,6 +23,7 @@ export default function OrderCheckout() {
 
   const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
   const empty = itemCount === 0;
+  const selectedSummary = items.map((i) => `${i.quantity}× ${i.name}`).join(', ');
   const name = payerName.trim();
   const close = () => setStep('idle');
 
@@ -76,15 +77,25 @@ export default function OrderCheckout() {
             gap: spacing.md,
           }}
         >
-          <Text
-            style={{
-              color: empty ? colors.textDisabled : colors.text,
-              fontFamily: fonts.semibold,
-              fontSize: fontSize.base,
-            }}
-          >
-            {empty ? 'No items selected' : `${itemCount} item${itemCount > 1 ? 's' : ''} selected`}
-          </Text>
+          <View style={{ flex: 1 }}>
+            <Text
+              style={{
+                color: empty ? colors.textDisabled : colors.text,
+                fontFamily: fonts.semibold,
+                fontSize: fontSize.base,
+              }}
+            >
+              {empty ? 'No items selected' : `${itemCount} item${itemCount > 1 ? 's' : ''} selected`}
+            </Text>
+            {!empty && (
+              <Text
+                numberOfLines={1}
+                style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm }}
+              >
+                {selectedSummary}
+              </Text>
+            )}
+          </View>
           <Button
             mode="contained"
             buttonColor={colors.primary}

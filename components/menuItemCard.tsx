@@ -3,7 +3,7 @@ import { Pressable, View } from 'react-native';
 import { IconButton, Text } from 'react-native-paper';
 import { useDesign } from '../contexts/designContext';
 import { useMenu } from '../contexts/menuContext';
-import { type CatalogItem } from '../constants/menu';
+import { formatCurrency, type CatalogItem } from '../constants/menu';
 
 type Props = {
   item: CatalogItem;
@@ -36,6 +36,9 @@ export default function MenuItemCard({ item }: Props) {
 
         <Text numberOfLines={1} style={{ color: colors.text, fontFamily: fonts.semibold, fontSize: fontSize.base }}>
           {item.name}
+        </Text>
+        <Text style={{ color: colors.textSecondary, fontFamily: fonts.regular, fontSize: fontSize.sm }}>
+          {formatCurrency(item.unitPrice)}
         </Text>
 
         {selected ? (

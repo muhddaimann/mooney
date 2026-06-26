@@ -15,6 +15,9 @@ import {
 LogBox.ignoreLogs([
   'props.pointerEvents is deprecated',
   '"shadow*" style props are deprecated',
+  // Paper's ripple/icon animations fall back to JS when RCTAnimation isn't
+  // present (e.g. web); harmless but noisy.
+  'Animated: `useNativeDriver`',
 ]);
 
 export default function RootLayout() {

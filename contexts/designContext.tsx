@@ -13,6 +13,7 @@ import {
   MD3LightTheme,
   type MD3Theme,
 } from 'react-native-paper';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { createTokens, type ThemeMode, type Tokens } from '../constants/design';
 import { StorageKeys, getItem, setItem } from './tokenContext';
 
@@ -37,6 +38,17 @@ type DesignContextValue = Tokens & {
 };
 
 const DesignContext = createContext<DesignContextValue | null>(null);
+
+/**
+ * Paper expects an icon library to be wired in. Its default icon names are
+ * MaterialCommunityIcons names (e.g. `weather-night`), so we map straight onto
+ * the Expo vector-icons font — no extra native linking required.
+ */
+const paperSettings = {
+  icon: (props: React.ComponentProps<typeof MaterialCommunityIcons>) => (
+    <MaterialCommunityIcons {...props} />
+  ),
+};
 
 /** Map our tokens onto a Material Design 3 theme for react-native-paper. */
 const buildPaperTheme = (tokens: Tokens): MD3Theme => {
@@ -129,7 +141,9 @@ export const DesignProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <DesignContext.Provider value={value}>
-      <PaperProvider theme={paperTheme}>{children}</PaperProvider>
+      <PaperProvider theme={paperTheme} settings={paperSettings}>
+        {children}
+      </PaperProvider>
     </DesignContext.Provider>
   );
 };

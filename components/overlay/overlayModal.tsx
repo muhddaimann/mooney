@@ -95,7 +95,9 @@ export function OverlayModal({
     <View
       style={[
         StyleSheet.absoluteFill,
-        { padding: fullscreen ? 0 : tokens.spacing.lg },
+        fullscreen
+          ? { padding: 0 }
+          : { paddingVertical: tokens.spacing.md, paddingHorizontal: tokens.spacing.lg },
         containerAlignment(variant),
       ]}
     >

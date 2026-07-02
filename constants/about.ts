@@ -4,8 +4,19 @@ export const about = {
   tagline: "Privacy-first personal finance toolkit.",
   description:
     "A lightweight, privacy-first personal finance app focused on Kutu tracking, money management, savings and shared expenses. Everything works locally without requiring an account.",
-  version: "0.8.0",
+  version: "0.9.0",
   changelog: [
+    {
+      version: "0.9.0",
+      date: "2026-07-02",
+      changes: [
+        "Kutu groups now have a planned member count set at creation, with cycles labeled by calendar month instead of round numbers",
+        "Added a payout history view listing every completed cycle's month and recipient",
+        "Added a sample-data action to load a fully-populated example kutu group",
+        "\"Add member\" is hidden once a group reaches its planned member count",
+        "Modal padding revised - less vertical space, more horizontal",
+      ],
+    },
     {
       version: "0.8.0",
       date: "2026-07-02",

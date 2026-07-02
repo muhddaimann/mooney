@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="%LANG_ISO_CODE%">
+  <head>
+    <meta charset="utf-8" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+    <title>%WEB_TITLE%</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <!-- Kept in sync with the active theme at runtime by app/_layout.tsx (WebThemeSync). -->
+    <meta name="theme-color" content="#f8fafc" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!--
+      "default" (not "black-translucent"): translucent always applies a dark
+      overlay tint to the status-bar area on iOS regardless of the page's
+      actual background, which looked wrong against our light theme. This
+      value can't track the in-app light/dark toggle at runtime either way
+      (fixed at launch, same limitation as theme_color), so "default" is the
+      safer static choice since the app defaults to light mode.
+    -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Mooney" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+
+    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
+    <style id="expo-reset">
+      /* These styles make the body full-height */
+      html,
+      body {
+        height: 100%;
+      }
+      /* These styles disable body scrolling if you are using <ScrollView> */
+      body {
+        overflow: hidden;
+        overscroll-behavior: none;
+      }
+      /* These styles make the root element full-height */
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+    </style>
+
+    <!--
+      Renders the app as a phone-shaped card floating on a desktop browser tab,
+      complete with a fake status-bar/home-indicator so it reads as "mobile"
+      rather than a plain rectangle. Actual phones (narrow viewport) and
+      installed/standalone PWAs get the real edge-to-edge layout instead -
+      this frame is a desktop-only preview and has no effect on the real app.
+    -->
+    <style id="mooney-mobile-lock">
+      html,
+      body {
+        background: #f8fafc;
+      }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+      #mooney-phone-frame {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 430px;
+        height: min(900px, calc(100vh - 48px));
+        border-radius: 44px;
+        overflow: hidden;
+        background: #f8fafc;
+        box-shadow:
+          0 30px 60px rgba(2, 6, 23, 0.35),
+          0 0 0 10px #0b1120;
+      }
+      #mooney-fake-statusbar,
+      #mooney-fake-home-indicator {
+        flex-shrink: 0;
+        background: inherit;
+      }
+      #mooney-fake-statusbar {
+        height: 44px;
+      }
+      #mooney-fake-home-indicator {
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #mooney-fake-home-indicator span {
+        width: 120px;
+        height: 5px;
+        border-radius: 3px;
+        background: currentColor;
+        opacity: 0.35;
+      }
+      #root {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+      }
+      @media (max-width: 480px), (display-mode: standalone) {
+        body {
+          padding: 0;
+        }
+        #mooney-phone-frame {
+          max-width: none;
+          height: 100%;
+          border-radius: 0;
+          box-shadow: none;
+        }
+        #mooney-fake-statusbar,
+        #mooney-fake-home-indicator {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Use static rendering with Expo Router to support running without JavaScript. -->
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <div id="mooney-phone-frame">
+      <!-- Desktop-only decorative status bar/home indicator, kept in sync with the theme by app/_layout.tsx (WebThemeSync). Hidden on real phones and installed PWAs, which use their own real OS chrome. -->
+      <div id="mooney-fake-statusbar" aria-hidden="true"></div>
+      <!-- The root element for your Expo app. -->
+      <div id="root"></div>
+      <div id="mooney-fake-home-indicator" aria-hidden="true"><span></span></div>
+    </div>
+  </body>
+</html>

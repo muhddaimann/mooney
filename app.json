@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "Mooney",
+    "slug": "mooney",
+    "version": "1.0.0",
+    "scheme": "mooney",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "platforms": ["web"],
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
